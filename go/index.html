@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>공고 여는 중</title>
+<style>
+body{margin:0;font-family:"Malgun Gothic","Apple SD Gothic Neo",sans-serif;background:#f3f5f5;color:#122a2e;display:grid;place-items:center;min-height:100vh;padding:16px;box-sizing:border-box}
+p{margin:0 0 10px}
+button{font:inherit;padding:10px 16px;border:0;border-radius:8px;background:#0d6b66;color:#fff;cursor:pointer}
+</style>
+</head>
+<body>
+<main>
+  <p id="msg">입찰 공고 화면으로 이동하는 중입니다…</p>
+  <form id="f" method="post"><button type="submit" id="btn" hidden>공고 열기</button></form>
+</main>
+<script>
+// 입찰 알림 메일·목록에서 쓰는 중간 페이지.
+// 공고 상세가 POST 양식으로만 열리는 전자조달(LH, 국방전자조달)에 양식을 대신 제출한다.
+// ?u=상세주소&나머지 파라미터 → 같은 이름의 hidden 필드로 POST. 허용한 주소로만 보낸다.
+(function(){
+  var ALLOW = ["https://ebid.lh.or.kr/", "https://www.d2b.go.kr/"];
+  var q = new URLSearchParams(location.search);
+  var u = q.get("u") || "";
+  var msg = document.getElementById("msg");
+  if (!ALLOW.some(function(a){ return u.indexOf(a) === 0; })) {
+    msg.textContent = "열 수 없는 주소입니다.";
+    return;
+  }
+  var f = document.getElementById("f");
+  f.action = u;
+  q.forEach(function(v, k){
+    if (k === "u") return;
+    var i = document.createElement("input");
+    i.type = "hidden"; i.name = k; i.value = v;
+    f.appendChild(i);
+  });
+  document.getElementById("btn").hidden = false;
+  f.submit();
+})();
+</script>
+</body>
+</html>
