@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-size:14px}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>외부감사 준비 안내</title>
+<style>
+/* 종이 안내문 두 장을 그대로 보여 주는 열람 페이지. 위에 인쇄용 PDF 버튼 */
+:root{--bg:#eef1f5;--paper:#ffffff;--ink:#1d2b45;--muted:#5d6878;--line:#d3d9e2;--accent:#1f3a5f;--on-accent:#ffffff;
+  --f:"Malgun Gothic","Apple SD Gothic Neo","Noto Sans KR",sans-serif}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#121821;--paper:#ffffff;--ink:#e6ebf2;--muted:#9aa6b6;--line:#2a3442;--accent:#8fb3e0;--on-accent:#0f1a2a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#121821;--paper:#ffffff;--ink:#e6ebf2;--muted:#9aa6b6;--line:#2a3442;--accent:#8fb3e0;--on-accent:#0f1a2a;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f);line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:820px;margin:0 auto;padding-block:20px 40px;display:flex;flex-direction:column;gap:16px}
+h1{font-size:22px;margin:0;text-wrap:balance}
+.eyebrow{font-size:12px;letter-spacing:.05em;color:var(--accent);font-weight:700}
+p{margin:0}
+.sub{color:var(--muted);font-size:14px}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.btn{display:inline-block;background:var(--accent);color:var(--on-accent);text-decoration:none;font-weight:700;font-size:15px;padding:10px 16px;border-radius:8px}
+.btn:focus-visible{outline:3px solid var(--line);outline-offset:2px}
+.page{background:var(--paper);border:1px solid var(--line);border-radius:4px;overflow:hidden}
+.page img{display:block;width:100%;height:auto}
+.cap{font-size:13px;color:var(--muted)}
+footer{font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px}
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <header style="display:flex;flex-direction:column;gap:6px">
+    <span class="eyebrow">지인회계법인</span>
+    <h1>2027 사업연도 외부감사 준비 안내</h1>
+    <p class="sub">우편으로 보내 드린 안내문의 동봉자료입니다. 앞면은 감사인 선임부터 공시까지의 일정표, 뒷면은 법인 소개입니다.</p>
+  </header>
+
+  <div class="bar">
+    <a class="btn" href="insert.pdf" target="_blank" rel="noopener">인쇄용 PDF 열기</a>
+    <span class="cap">A4 2쪽 · PDF를 연 뒤 인쇄하시면 됩니다.</span>
+  </div>
+
+  <span class="cap">앞면 · 2027 사업연도 외부감사 준비 일정표</span>
+  <div class="page"><img src="page1.png" alt="2027 사업연도 외부감사 준비 일정표: 감사인 선임기한 2027년 2월 15일, 선임 보고 계약 후 2주, 처음 감사받는 회사 2027년 4월 30일, 연간 일정과 준비 자료" width="1240" height="1754"></div>
+
+  <span class="cap">뒷면 · 지인회계법인 소개</span>
+  <div class="page"><img src="page2.png" alt="지인회계법인 소개: 세무·자문 서비스, 감사 진행 방식, 자주 묻는 질문, 담당 회계사 연락처" width="1240" height="1754" loading="lazy"></div>
+
+  <footer>
+    문의 · 지인회계법인 담당 이재강 공인회계사 010-6624-2061 · ljkdlworkd@gmail.com<br>
+    서울특별시 강남구 테헤란로103길 6, 5층 (삼성동)
+  </footer>
+</div>
+
+</body>
+</html>
