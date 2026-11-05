@@ -95,10 +95,14 @@ td.n,th.n{text-align:right;white-space:nowrap}
 .tips b{display:block;font-weight:600}.tips span{color:var(--muted)}
 .foot{border-top:1px solid var(--line);padding-top:14px;font-size:13px;color:var(--muted);display:grid;gap:8px}
 .foot p{margin:0}.foot .contact{color:var(--ink);font-size:14.5px}
+.foot .req{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+.foot .req a{display:inline-block;padding:9px 16px;border-radius:4px;background:var(--accent);color:var(--accent-ink);font-weight:600;font-size:14.5px;text-decoration:none}
+.foot .req a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.foot .req span{flex:1 1 240px;min-width:0}
 @media (max-width:860px){.wrap{grid-template-columns:minmax(0,1fr)}form{position:static;max-height:none}.areas{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:460px){.summary{grid-template-columns:minmax(0,1fr)}}
 @media (prefers-reduced-motion:no-preference){.bar .me{transition:left .25s ease}}
-@media print{form,header,.btns{display:none!important}.wrap{display:block;padding:0}body{background:#fff}.report{border:0;padding:0}}
+@media print{form,header,.btns,.foot .req{display:none!important}.wrap{display:block;padding:0}body{background:#fff}.report{border:0;padding:0}}
 </style>
 
 </head>
@@ -337,6 +341,7 @@ function render(){
   <div class="btns"><button type="button" id="copy">결과 요약 복사</button><button type="button" class="primary" id="print" hidden>결과지 인쇄·PDF 저장</button></div>
   <div class="foot">
     <p class="contact">결과가 궁금하시면 해설해 드립니다. 지인회계법인 이재강 회계사 010-6624-2061</p>
+    <p class="req"><a href="https://docs.google.com/forms/d/e/1FAIpQLSfaEsLoOdYhFwksH5v3QODxUkRyrGhUitBA-r2QeivDqxpBfA/viewform" target="_blank" rel="noopener">결과 해설 요청하기</a><span>무료이며 감사인 선임이나 계약 여부와 관계없습니다. 새 창에서 구글 설문이 열리며, 입력하신 재무 숫자와 결과는 넘어가지 않습니다.</span></p>
     <p>비교 자료: 금융감독원 전자공시(DART)에 2026년 상반기 공시된 비상장 회사의 2025년 12월 결산 감사보고서 중 무작위 표본 ${B.meta.used.toLocaleString("ko-KR")}곳, 업종별 비교는 그중 업종을 확인한 ${B.meta.usedInd.toLocaleString("ko-KR")}곳(K-IFRS 적용 회사, 자산 1,500억 초과 회사, 확인된 금융업 제외). 외부감사를 받는 회사 기준이라 규모가 작은 회사나 개인사업자는 차이가 날 수 있습니다.</p>
     <p>이 결과지는 입력한 숫자로 계산한 참고 자료이며 감사의견, 신용평가, 투자·세무 판단이 아닙니다.</p>
   </div>`;
