@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>비용 한도 계산기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@700&family=IBM+Plex+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* 고용 세액공제 계산기와 같은 집안: 입력 → 큰 숫자 → 내역 → 알아 둘 점 → 상담 */
+:root{
+  --bg:#f3f5f5; --surface:#ffffff; --ink:#122a2e; --muted:#5b6c6f; --line:#d5dddd;
+  --accent:#0d6b66; --accent-soft:#e2efee; --gold:#9a6a00; --gold-soft:#fbf1dc; --warn:#b3261e; --warn-soft:#fbe9e7;
+  --f-display:"Gowun Batang","Nanum Myeongjo",serif;
+  --f-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --f-num:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0c1618; --surface:#132226; --ink:#e4eded; --muted:#93a6a8; --line:#25393d;
+  --accent:#46b9ae; --accent-soft:#16312f; --gold:#e7b84a; --gold-soft:#332611; --warn:#ff8a80; --warn-soft:#3a1c1a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0c1618; --surface:#132226; --ink:#e4eded; --muted:#93a6a8; --line:#25393d;
+  --accent:#46b9ae; --accent-soft:#16312f; --gold:#e7b84a; --gold-soft:#332611; --warn:#ff8a80; --warn-soft:#3a1c1a; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.6;word-break:keep-all;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.app{max-width:520px;margin:0 auto;padding-block:20px 40px;display:flex;flex-direction:column;gap:14px}
+h1,h2{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.3}
+h1{font-size:26px} h2{font-size:18px}
+p{margin:0}
+.eyebrow{font-size:12px;letter-spacing:.06em;color:var(--accent);font-weight:700}
+.sub{color:var(--muted);font-size:14px}
+.num{font-family:var(--f-num);font-variant-numeric:tabular-nums}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:14px}
+.card-head{display:flex;flex-direction:column;gap:4px}
+.sample{font-size:12px;color:var(--gold);background:var(--gold-soft);border-radius:8px;padding:6px 10px}
+.seg{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg.three{grid-template-columns:repeat(3,1fr)}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label{text-align:center;padding:9px 4px;font-weight:500;cursor:pointer;color:var(--muted);font-size:14px}
+.seg input:checked+label{background:var(--accent);color:var(--surface)}
+.seg input:focus-visible+label{outline:2px solid var(--accent);outline-offset:-4px}
+.grp{display:flex;flex-direction:column;gap:6px}
+.grp>span{font-size:13px;color:var(--muted)}
+.f{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,132px) 30px;gap:8px;align-items:center}
+.f label{font-size:14px;line-height:1.35}
+.f input{width:100%;min-width:0;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:500 16px var(--f-num);padding:9px 10px;outline:none;text-align:right}
+.f input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.f .u{font-size:12px;color:var(--muted)}
+.chk{display:flex;gap:8px;align-items:flex-start;font-size:14px;line-height:1.45;cursor:pointer}
+.chk input{margin-top:3px;accent-color:var(--accent)}
+.hint{font-size:12px;color:var(--muted)}
+fieldset{border:0;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+legend{font-weight:700;font-size:14px;padding:0;margin-bottom:8px}
+.hero{align-items:flex-start}
+.big{font:500 34px var(--f-num);letter-spacing:-.02em;color:var(--gold);line-height:1.15}
+.big small{font-size:16px;color:var(--muted);margin-left:4px}
+.rows{display:flex;flex-direction:column;align-self:stretch}
+.r{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;align-items:baseline;padding:10px 0;border-top:1px solid var(--line)}
+.r:first-child{border-top:0}
+.r .amt{font:500 16px var(--f-num);text-align:right;white-space:nowrap}
+.r .d{grid-column:1/3;font-size:12px;color:var(--muted)}
+.r.tot{border-top:2px solid var(--ink)}
+.r.tot b,.r.tot .amt{font-weight:700}
+.notes{display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--muted);border-top:1px dashed var(--line);padding-top:12px;align-self:stretch}
+.notes .w{color:var(--warn)}
+ul.plain{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:14px}
+details{border-top:1px solid var(--line);padding-top:10px}
+details:first-of-type{border-top:0;padding-top:0}
+summary{cursor:pointer;font-weight:500}
+summary .tag{font-size:11px;font-weight:700;padding:1px 7px;border-radius:999px;margin-left:6px;white-space:nowrap}
+.tag.ok{background:var(--accent-soft);color:var(--accent)}
+.tag.mid{background:var(--gold-soft);color:var(--gold)}
+.tag.bad{background:var(--warn-soft);color:var(--warn)}
+details p{font-size:13px;color:var(--muted);margin-top:6px}
+.cta{background:var(--accent);color:var(--surface);border:0}
+.cta .sub,.cta h2{color:inherit}
+.cta .sub{opacity:.85}
+.contact{display:flex;align-items:center;justify-content:space-between;gap:10px;background:rgba(255,255,255,.12);border-radius:10px;padding:10px 12px}
+.contact .num{font-size:19px;user-select:all}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+.btn{appearance:none;border:1px solid currentColor;background:transparent;color:inherit;font:500 14px var(--f-body);padding:7px 12px;border-radius:8px;cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn.solid{background:var(--surface);color:var(--accent);border-color:var(--surface)}
+.btn:focus-visible{outline:2px solid var(--surface);outline-offset:2px}
+footer{font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:6px;padding:0 4px}
+footer ul{margin:0;padding-left:16px}
+footer a{color:var(--accent)}
+@media print{.cta,.sample{display:none}}
+</style>
+<style>.tabs{position:sticky;top:0;z-index:2;background:var(--bg);padding:6px 0}</style>
+</head>
+<body>
+<div class="app">
+  <header style="display:flex;flex-direction:column;gap:8px;padding:4px 4px 6px">
+    <span class="eyebrow">지인회계법인 · 결산 전 비용 한도 점검</span>
+    <h1>접대비와 법인차, 올해 비용으로 얼마까지 인정될까요</h1>
+    <p class="sub">기업업무추진비(옛 접대비)와 업무용 승용차 비용은 쓴 만큼 다 비용으로 인정되지 않습니다. 12월 31일 전에 한도와 남은 금액을 확인해 보세요.</p>
+  </header>
+
+  <div class="tabs">
+    <div class="seg" role="radiogroup" aria-label="계산 항목">
+      <input type="radio" name="tab" id="tab-e" value="e" checked><label for="tab-e">기업업무추진비</label>
+      <input type="radio" name="tab" id="tab-c" value="c"><label for="tab-c">업무용 승용차</label>
+    </div>
+  </div>
+
+  <!-- 기업업무추진비 -->
+  <div id="pane-e" style="display:flex;flex-direction:column;gap:14px">
+    <section class="card" id="in-e" aria-labelledby="h-ine">
+      <div class="card-head"><h2 id="h-ine">회사 정보와 지출액</h2></div>
+      <p class="sample" data-sample>예시 값이 들어 있습니다. 귀사 숫자로 바꿔 보세요. 금액 단위는 만원입니다.</p>
+      <div class="grp"><span>기업 규모 (조세특례제한법상 중소기업이면 기본한도 3배)</span>
+        <div class="seg" role="radiogroup" aria-label="기업 규모">
+          <input type="radio" name="sme" id="sme-y" value="y" checked><label for="sme-y">중소기업</label>
+          <input type="radio" name="sme" id="sme-n" value="n"><label for="sme-n">그 외</label>
+        </div>
+      </div>
+      <div class="f"><label for="e-m">사업연도 개월 수</label><input id="e-m" inputmode="numeric" value="12"><span class="u">개월</span></div>
+      <div class="f"><label for="e-rev">올해 예상 매출액</label><input id="e-rev" inputmode="numeric" value="800,000"><span class="u">만원</span></div>
+      <div class="f"><label for="e-rel">그중 특수관계인 매출</label><input id="e-rel" inputmode="numeric" value="0"><span class="u">만원</span></div>
+      <div class="f"><label for="e-sp">올해 쓴(쓸) 기업업무추진비 합계</label><input id="e-sp" inputmode="numeric" value="7,000"><span class="u">만원</span></div>
+      <div class="f"><label for="e-np">그중 법인카드·세금계산서 등 적격증빙이 없는 금액</label><input id="e-np" inputmode="numeric" value="200"><span class="u">만원</span></div>
+      <p class="hint">한 번에 3만원(경조사비는 20만원)을 넘는데 법인 명의 카드·현금영수증·세금계산서가 없는 지출입니다. 한도와 상관없이 전액 비용으로 인정되지 않습니다.</p>
+      <div class="f"><label for="e-cu">그중 문화비 (공연·전시 관람권, 도서 등)</label><input id="e-cu" inputmode="numeric" value="0"><span class="u">만원</span></div>
+      <div class="f"><label for="e-mk">그중 전통시장·지역사랑상품권 지출</label><input id="e-mk" inputmode="numeric" value="0"><span class="u">만원</span></div>
+      <label class="chk"><input type="checkbox" id="e-spc"><span>부동산임대업이 주업(또는 임대·이자·배당 수입이 매출의 50% 이상)이고 상시근로자 5명 미만, 지배주주 지분 50% 초과인 법인 (한도 절반)</span></label>
+      <div class="grp"><span>회사에 적용되는 법인세율 구간 (지방소득세 포함)</span>
+        <div class="seg three" role="radiogroup" aria-label="법인세율">
+          <input type="radio" name="e-tr" id="e-tr1" value="0.11"><label for="e-tr1">11%</label>
+          <input type="radio" name="e-tr" id="e-tr2" value="0.22" checked><label for="e-tr2">22%</label>
+          <input type="radio" name="e-tr" id="e-tr3" value="0.242"><label for="e-tr3">24.2%</label>
+        </div>
+        <span class="hint">과세표준 2억원 이하 11%, 2억~200억원 22%, 200억원 초과 24.2%</span>
+      </div>
+    </section>
+
+    <section class="card hero" aria-live="polite" aria-labelledby="h-re">
+      <span class="eyebrow" id="h-re">비용으로 인정되지 않는 금액</span>
+      <div class="big num" id="e-big">0<small>만원</small></div>
+      <p class="sub" id="e-sub"></p>
+      <div class="rows" id="e-rows"></div>
+      <div class="notes" id="e-notes"></div>
+    </section>
+  </div>
+
+  <!-- 업무용 승용차 -->
+  <div id="pane-c" hidden style="flex-direction:column;gap:14px">
+    <section class="card" id="in-c" aria-labelledby="h-inc">
+      <div class="card-head">
+        <h2 id="h-inc">차량 한 대 기준</h2>
+        <p class="sub">차량이 여러 대면 한 대씩 계산합니다. 화물차, 9인승 이상 승합차, 경차, 택시·렌터카 등 영업용 차량은 대상이 아닙니다.</p>
+      </div>
+      <p class="sample" data-sample>예시 값이 들어 있습니다. 금액 단위는 만원입니다.</p>
+      <div class="grp"><span>보유 방식</span>
+        <div class="seg three" role="radiogroup" aria-label="보유 방식">
+          <input type="radio" name="own" id="own-o" value="o" checked><label for="own-o">회사 소유</label>
+          <input type="radio" name="own" id="own-l" value="l"><label for="own-l">리스</label>
+          <input type="radio" name="own" id="own-r" value="r"><label for="own-r">장기 렌트</label>
+        </div>
+      </div>
+      <div class="f"><label for="c-mh">올해 보유(임차) 개월 수</label><input id="c-mh" inputmode="numeric" value="12"><span class="u">개월</span></div>
+      <div class="f" id="row-price"><label for="c-price">취득가액 (부가세 포함)</label><input id="c-price" inputmode="numeric" value="9,000"><span class="u">만원</span></div>
+      <div class="f" id="row-rent" hidden><label for="c-rent">올해 낸 리스료·렌트료</label><input id="c-rent" inputmode="numeric" value="1,800"><span class="u">만원</span></div>
+      <div class="f" id="row-excl" hidden><label for="c-excl">리스료 중 보험료·자동차세·수선유지비</label><input id="c-excl" inputmode="numeric" value="200"><span class="u">만원</span></div>
+      <div class="f"><label for="c-oth">그 밖의 비용 (유류비·보험료·수리비·자동차세·통행료 등)</label><input id="c-oth" inputmode="numeric" value="900"><span class="u">만원</span></div>
+      <label class="chk"><input type="checkbox" id="c-ins" checked><span>임직원만 운전할 수 있는 업무전용자동차보험에 1년 내내 가입했다 (렌트는 운전자를 임직원으로 한정하는 특약)</span></label>
+      <label class="chk"><input type="checkbox" id="c-plate"><span>법인 전용 번호판(연두색) 부착 대상인데 달지 않았다</span></label>
+      <div class="grp"><span>운행기록부</span>
+        <div class="seg" role="radiogroup" aria-label="운행기록부">
+          <input type="radio" name="log" id="log-n" value="n" checked><label for="log-n">작성하지 않음</label>
+          <input type="radio" name="log" id="log-y" value="y"><label for="log-y">작성함</label>
+        </div>
+      </div>
+      <div class="f" id="row-ratio" hidden><label for="c-ratio">운행기록상 업무 사용 비율 (출퇴근 포함)</label><input id="c-ratio" inputmode="decimal" value="90"><span class="u">%</span></div>
+      <label class="chk"><input type="checkbox" id="c-spc"><span>부동산임대업 주업 등 소규모 법인 (위 기업업무추진비 탭의 조건과 같음, 한도 1,500만→500만원, 800만→400만원)</span></label>
+      <div class="grp"><span>회사에 적용되는 법인세율 구간 (지방소득세 포함)</span>
+        <div class="seg three" role="radiogroup" aria-label="법인세율">
+          <input type="radio" name="c-tr" id="c-tr1" value="0.11"><label for="c-tr1">11%</label>
+          <input type="radio" name="c-tr" id="c-tr2" value="0.22" checked><label for="c-tr2">22%</label>
+          <input type="radio" name="c-tr" id="c-tr3" value="0.242"><label for="c-tr3">24.2%</label>
+        </div>
+      </div>
+    </section>
+
+    <section class="card hero" aria-live="polite" aria-labelledby="h-rc">
+      <span class="eyebrow" id="h-rc">올해 비용으로 인정되는 금액</span>
+      <div class="big num" id="c-big">0<small>만원</small></div>
+      <p class="sub" id="c-sub"></p>
+      <div class="rows" id="c-rows"></div>
+      <div class="notes" id="c-notes"></div>
+    </section>
+  </div>
+
+  <section class="card cta" aria-labelledby="h-cta">
+    <div class="card-head">
+      <h2 id="h-cta">결산 전에 한 번 같이 보시죠</h2>
+      <p class="sub">계정별 원장만 있으면 기업업무추진비로 분류해야 할 지출과 아닌 지출, 차량별 한도 초과액을 정리해 드립니다. 감사인 선임이나 계약 여부와 관계없이 무료입니다.</p>
+    </div>
+    <div class="contact">
+      <div style="display:flex;flex-direction:column;min-width:0">
+        <span style="font-size:12px;opacity:.85">이재강 공인회계사 직통</span>
+        <span class="num">010-6624-2061</span>
+      </div>
+      <button class="btn solid" type="button" data-copy="010-6624-2061">번호 복사</button>
+    </div>
+    <div class="btns">
+      <a class="btn" href="tel:01066242061">전화 걸기</a>
+      <button class="btn" type="button" data-copy="ljkdlworkd@gmail.com">이메일 주소 복사</button>
+    </div>
+    <p style="font-size:12px;opacity:.85">ljkdlworkd@gmail.com · 서울 강남구 테헤란로103길 6, 5층 지인회계법인</p>
+  </section>
+
+  <footer>
+    <b>계산 기준 (2026년 귀속 법령)</b>
+    <ul>
+      <li>기업업무추진비: 법인세법 제25조, 시행령 제41조·제42조. 기본한도 1,200만원(중소기업 3,600만원) × 개월 수 ÷ 12 + 매출액 기준 한도(100억원 이하 0.3%, 500억원 이하 0.2%, 초과 0.03%). 특수관계인 매출은 그 비율의 10%</li>
+      <li>문화비·전통시장 추가 한도: 조세특례제한법 제136조 제3항·제6항, 각각 일반 한도의 20% 범위 (2028년 말까지)</li>
+      <li>업무용 승용차: 법인세법 제27조의2, 시행령 제50조의2, 시행규칙 제27조의2. 감가상각은 5년 정액법, 운행기록이 없으면 연 1,500만원까지만 업무 사용으로 인정, 업무 사용분 감가상각비(리스·렌트는 감가상각비 상당액)는 연 800만원 초과분을 다음 해 이후로 넘김. 렌트료의 감가상각비 상당액은 70%</li>
+    </ul>
+    <p>이 결과는 입력한 숫자로 계산한 추정치입니다. 매출액은 기업회계기준 매출액이며, 정부출자기관 특례, 현물 접대의 시가 평가, 차량 처분손실 한도, 개인사업자(복식부기의무자) 기준 차이는 반영하지 않았습니다. 입력한 값은 이 기기 안에서만 계산되고 어디로도 전송되지 않습니다.</p>
+    <p><a href="../">지인회계법인의 다른 무료 도구 보기</a></p>
+  </footer>
+</div>
+
+<script>
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  function num(id){ var v = parseFloat(String($(id).value).replace(/,/g, "")); return isNaN(v) ? 0 : Math.max(0, v); }
+  function pick(n){ return document.querySelector('input[name="' + n + '"]:checked').value; }
+  function man(v){
+    v = Math.round(v);
+    var eok = Math.floor(v / 10000), rest = v % 10000;
+    if (eok && rest) return eok + "억 " + rest.toLocaleString("ko-KR") + "만원";
+    if (eok) return eok + "억원";
+    return rest.toLocaleString("ko-KR") + "만원";
+  }
+  function big(v){ return man(v).replace(/(만원|억원)$/, "<small>$1</small>"); }
+  function row(label, amt, d, cls){ return '<div class="r' + (cls ? " " + cls : "") + '"><b>' + label + '</b><span class="amt">' + amt + '</span>' + (d ? '<span class="d">' + d + '</span>' : "") + '</div>'; }
+  function notes(id, list){ $(id).innerHTML = list.map(function(t){ return "<p>" + t + "</p>"; }).join(""); $(id).hidden = !list.length; }
+
+  // ---- 기업업무추진비 (만원) ----
+  function revLim(x){
+    if (x <= 1000000) return x * 0.003;
+    if (x <= 5000000) return 3000 + (x - 1000000) * 0.002;
+    return 11000 + (x - 5000000) * 0.0003;
+  }
+  function calcE(x){
+    var m = Math.min(12, Math.max(1, Math.ceil(x.m || 12)));
+    var base = (x.sme ? 3600 : 1200) * m / 12;
+    var rel = Math.min(x.rel, x.rev), gen = x.rev - rel;
+    var rl = revLim(gen) + (revLim(x.rev) - revLim(gen)) * 0.1;
+    var g = (base + rl) * (x.spc ? 0.5 : 1);
+    var valid = Math.max(0, x.sp - x.np);
+    var cu = Math.min(Math.min(x.cu, valid), g * 0.2);
+    var mk = Math.min(Math.min(x.mk, valid), g * 0.2);
+    // 추가 한도는 일반 한도를 넘은 지출에만 의미가 있다
+    var over0 = Math.max(0, valid - g);
+    var extra = Math.min(over0, cu + mk);
+    var lim = g + extra;
+    var over = Math.max(0, valid - lim);
+    var np = Math.min(x.np, x.sp);
+    return { m:m, base:base, rl:rl, g:g, cuLim:Math.min(x.cu, g * 0.2), mkLim:Math.min(x.mk, g * 0.2), extra:extra, lim:lim, valid:valid, over:over, np:np,
+             dis:over + np, left:Math.max(0, g + Math.min(x.cu, g*0.2) + Math.min(x.mk, g*0.2) - valid), tax:(over + np) * x.tr };
+  }
+  function renderE(){
+    var x = { sme:pick("sme") === "y", m:num("e-m"), rev:num("e-rev"), rel:num("e-rel"), sp:num("e-sp"), np:num("e-np"),
+              cu:num("e-cu"), mk:num("e-mk"), spc:$("e-spc").checked, tr:parseFloat(pick("e-tr")) };
+    var r = calcE(x);
+    $("e-big").innerHTML = big(r.dis);
+    $("e-sub").textContent = r.dis > 0 ? "이 금액만큼 법인세가 약 " + man(r.tax) + " 늘어납니다 (지방소득세 포함)." : "한도 안입니다. 비용으로 모두 인정됩니다.";
+    var h = [];
+    h.push(row("기본 한도", man(r.base * (x.spc ? 0.5 : 1)), (x.sme ? "3,600만원" : "1,200만원") + " × " + r.m + "개월 ÷ 12" + (x.spc ? " × 50%" : "")));
+    h.push(row("매출액 기준 한도", man(r.rl * (x.spc ? 0.5 : 1)), "매출 " + man(x.rev) + (x.rel > 0 ? ", 특수관계인 매출 " + man(Math.min(x.rel, x.rev)) + "은 10%만 반영" : "") + (x.spc ? " × 50%" : "")));
+    if (r.extra > 0) h.push(row("문화비·전통시장 추가 한도", man(r.extra), "일반 한도의 20% 범위에서 실제 쓴 금액만큼"));
+    h.push(row("비용 인정 한도", man(r.lim), "", "tot"));
+    h.push(row("증빙 있는 지출", man(r.valid), "전체 " + man(x.sp) + " − 증빙 없는 " + man(r.np)));
+    h.push(row("한도 초과", man(r.over), "증빙 있는 지출 − 한도"));
+    h.push(row("증빙 없는 지출", man(r.np), "한도와 관계없이 비용 불인정"));
+    $("e-rows").innerHTML = h.join("");
+    var n = [];
+    if (r.over === 0 && r.left > 0) n.push("한도까지 약 " + man(r.left) + " 남았습니다 (문화비·전통시장 추가분 포함). 이 범위의 지출은 비용으로 인정됩니다.");
+    if (r.over > 0 && x.cu === 0 && x.mk === 0) n.push("문화비(공연·전시 관람권, 도서 등)나 전통시장·지역사랑상품권으로 쓴 지출은 일반 한도의 20%씩 추가로 인정됩니다. 이미 쓴 지출 중 해당하는 것이 있는지 확인해 보세요.");
+    if (r.np > 0) n.push('<span class="w">증빙 없는 지출은 손금불산입되고, 쓴 사람이 분명하지 않으면 대표자 상여로 처리될 수 있습니다. 법인 명의 카드로 결제하는 습관이 가장 확실합니다.</span>');
+    n.push("거래처 접대가 아닌 직원 회식·복리후생비, 광고 목적의 견본품·기념품(1인당 연 5만원 이하) 등은 기업업무추진비가 아닙니다. 계정 분류가 맞는지 확인하면 한도 초과가 줄어드는 경우가 많습니다.");
+    notes("e-notes", n);
+  }
+
+  // ---- 업무용 승용차 (만원) ----
+  function calcC(x){
+    var mh = Math.min(12, Math.max(1, Math.ceil(x.mh || 12)));
+    var D, C;
+    if (x.own === "o") { D = x.price * 0.2 * mh / 12; C = D + x.oth; }
+    else if (x.own === "l") { D = Math.max(0, x.rent - Math.min(x.excl, x.rent)); C = x.rent + x.oth; }
+    else { D = x.rent * 0.7; C = x.rent + x.oth; }
+    var lim15 = (x.spc ? 500 : 1500) * mh / 12, lim8 = (x.spc ? 400 : 800) * mh / 12;
+    var why, ratio;
+    if (!x.ins) { ratio = 0; why = "업무전용자동차보험 미가입"; }
+    else if (x.plate) { ratio = 0; why = "법인 전용 번호판 미부착"; }
+    else if (x.log) { ratio = Math.min(100, x.ratio) / 100; why = "운행기록상 업무 사용 비율"; }
+    else { ratio = C <= lim15 ? 1 : lim15 / C; why = C <= lim15 ? "운행기록 없이도 " + man(lim15) + " 이하라 전액 인정" : "운행기록이 없어 " + man(lim15) + "까지만 인정"; }
+    var use = C * ratio, non = C - use;
+    var dep = D * ratio, depOver = Math.max(0, dep - lim8);
+    return { mh:mh, D:D, C:C, ratio:ratio, why:why, use:use, non:non, dep:dep, depOver:depOver, lim8:lim8, lim15:lim15,
+             ok:use - depOver, tax:(non + depOver) * x.tr };
+  }
+  function renderC(){
+    var x = { own:pick("own"), mh:num("c-mh"), price:num("c-price"), rent:num("c-rent"), excl:num("c-excl"), oth:num("c-oth"),
+              ins:$("c-ins").checked, plate:$("c-plate").checked, log:pick("log") === "y", ratio:num("c-ratio"),
+              spc:$("c-spc").checked, tr:parseFloat(pick("c-tr")) };
+    $("row-price").hidden = x.own !== "o";
+    $("row-rent").hidden = x.own === "o";
+    $("row-excl").hidden = x.own !== "l";
+    $("row-ratio").hidden = !x.log;
+    var r = calcC(x);
+    $("c-big").innerHTML = big(r.ok);
+    $("c-sub").textContent = "전체 비용 " + man(r.C) + " 중 " + man(r.non + r.depOver) + "은 올해 비용으로 인정되지 않습니다" + (r.non + r.depOver > 0 ? " (법인세 약 " + man(r.tax) + " 증가)." : ".");
+    var depName = x.own === "o" ? "감가상각비" : "감가상각비 상당액";
+    var h = [];
+    h.push(row("차량 관련 비용 합계", man(r.C), x.own === "o" ? "감가상각비 " + man(r.D) + " (취득가 × 20% × " + r.mh + "/12) + 그 밖의 비용 " + man(x.oth)
+                                                           : (x.own === "l" ? "리스료 " : "렌트료 ") + man(x.rent) + " + 그 밖의 비용 " + man(x.oth)));
+    h.push(row("업무 사용 인정 비율", Math.round(r.ratio * 1000) / 10 + "%", r.why));
+    h.push(row("업무 외 사용으로 불인정", man(r.non), r.non > 0 ? "차량을 쓴 사람의 상여 등으로 처리" : ""));
+    h.push(row(depName + " 한도 초과", man(r.depOver), "업무 사용분 " + depName + " " + man(r.dep) + " − 한도 " + man(r.lim8) + ". 다음 해 이후 한도가 남을 때 비용 처리"));
+    h.push(row("올해 비용 인정", man(r.ok), "", "tot"));
+    $("c-rows").innerHTML = h.join("");
+    var n = [];
+    if (!x.ins) n.push('<span class="w">업무전용자동차보험에 가입하지 않으면 차량 비용이 전액 불인정됩니다. 지금 가입하면 가입한 기간만큼은 인정됩니다.</span>');
+    if (x.plate) n.push('<span class="w">국토교통부 고시에 따라 법인 전용 번호판을 달아야 하는 차량(2024년 이후 등록한 취득가 8천만원 이상 법인 승용차 등)이 번호판을 달지 않으면 업무 사용 금액이 0원이 됩니다.</span>');
+    if (x.ins && !x.plate && !x.log && r.C > r.lim15) n.push("운행기록부를 쓰면 실제 업무 사용 비율만큼 인정됩니다. 출퇴근도 업무 사용에 들어가므로, 1,500만원을 넘는 차량은 기록을 남기는 편이 유리한 경우가 많습니다.");
+    if (r.depOver > 0) n.push("한도 초과 " + depName + "은 사라지는 것이 아니라 다음 해 이후로 넘어가 비용이 됩니다. 다만 비싼 차일수록 넘어간 금액을 다 쓰기까지 오래 걸립니다.");
+    notes("c-notes", n);
+  }
+
+  function tab(){
+    var t = pick("tab");
+    $("pane-e").hidden = t !== "e";
+    $("pane-c").hidden = t !== "c";
+    $("pane-c").style.display = t === "c" ? "flex" : "";
+  }
+  function commas(el){
+    if (el.id === "c-ratio") return;
+    var raw = el.value.replace(/[^0-9]/g, "");
+    var f = raw ? Number(raw).toLocaleString("ko-KR") : "";
+    if (f !== el.value) el.value = f;
+  }
+  [["in-e", renderE], ["in-c", renderC]].forEach(function(p){
+    var el = $(p[0]), touched = false;
+    el.addEventListener("input", function(){ if (!touched) { touched = true; el.querySelector("[data-sample]").hidden = true; } p[1](); });
+    el.addEventListener("change", function(e){ if (e.target.matches(".f input")) commas(e.target); p[1](); });
+  });
+  document.querySelectorAll('input[name="tab"]').forEach(function(i){ i.addEventListener("change", tab); });
+
+  document.querySelectorAll("[data-copy]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var text = b.getAttribute("data-copy"), orig = b.textContent;
+      function ok(){ b.textContent = "복사됨"; setTimeout(function(){ b.textContent = orig; }, 1500); }
+      function fail(){ b.textContent = "길게 눌러 복사"; setTimeout(function(){ b.textContent = orig; }, 2000); }
+      try { navigator.clipboard.writeText(text).then(ok, fail); } catch(e){ fail(); }
+    });
+  });
+
+  window.__calc = { calcE:calcE, calcC:calcC };
+  tab(); renderE(); renderC();
+})();
+</script>
+</body>
+</html>
