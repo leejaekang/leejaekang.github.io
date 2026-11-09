@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>외부감사 준비 일정표</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@700&family=IBM+Plex+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* 고용 세액공제 계산기와 같은 집안: 입력 → 큰 숫자 → 내역 → 알아 둘 점 → 상담 */
+:root{
+  --bg:#f3f5f5; --surface:#ffffff; --ink:#122a2e; --muted:#5b6c6f; --line:#d5dddd;
+  --accent:#0d6b66; --accent-soft:#e2efee; --gold:#9a6a00; --gold-soft:#fbf1dc; --warn:#b3261e; --warn-soft:#fbe9e7;
+  --f-display:"Gowun Batang","Nanum Myeongjo",serif;
+  --f-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --f-num:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0c1618; --surface:#132226; --ink:#e4eded; --muted:#93a6a8; --line:#25393d;
+  --accent:#46b9ae; --accent-soft:#16312f; --gold:#e7b84a; --gold-soft:#332611; --warn:#ff8a80; --warn-soft:#3a1c1a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0c1618; --surface:#132226; --ink:#e4eded; --muted:#93a6a8; --line:#25393d;
+  --accent:#46b9ae; --accent-soft:#16312f; --gold:#e7b84a; --gold-soft:#332611; --warn:#ff8a80; --warn-soft:#3a1c1a; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.6;word-break:keep-all;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.app{max-width:520px;margin:0 auto;padding-block:20px 40px;display:flex;flex-direction:column;gap:14px}
+h1,h2{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.3}
+h1{font-size:26px} h2{font-size:18px}
+p{margin:0}
+.eyebrow{font-size:12px;letter-spacing:.06em;color:var(--accent);font-weight:700}
+.sub{color:var(--muted);font-size:14px}
+.num{font-family:var(--f-num);font-variant-numeric:tabular-nums}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:14px}
+.card-head{display:flex;flex-direction:column;gap:4px}
+.sample{font-size:12px;color:var(--gold);background:var(--gold-soft);border-radius:8px;padding:6px 10px}
+.seg{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg.three{grid-template-columns:repeat(3,1fr)}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label{text-align:center;padding:9px 4px;font-weight:500;cursor:pointer;color:var(--muted);font-size:14px}
+.seg input:checked+label{background:var(--accent);color:var(--surface)}
+.seg input:focus-visible+label{outline:2px solid var(--accent);outline-offset:-4px}
+.grp{display:flex;flex-direction:column;gap:6px}
+.grp>span{font-size:13px;color:var(--muted)}
+.f{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,132px) 30px;gap:8px;align-items:center}
+.f label{font-size:14px;line-height:1.35}
+.f input{width:100%;min-width:0;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:500 16px var(--f-num);padding:9px 10px;outline:none;text-align:right}
+.f input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.f .u{font-size:12px;color:var(--muted)}
+.chk{display:flex;gap:8px;align-items:flex-start;font-size:14px;line-height:1.45;cursor:pointer}
+.chk input{margin-top:3px;accent-color:var(--accent)}
+.hint{font-size:12px;color:var(--muted)}
+fieldset{border:0;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+legend{font-weight:700;font-size:14px;padding:0;margin-bottom:8px}
+.hero{align-items:flex-start}
+.big{font:500 34px var(--f-num);letter-spacing:-.02em;color:var(--gold);line-height:1.15}
+.big small{font-size:16px;color:var(--muted);margin-left:4px}
+.rows{display:flex;flex-direction:column;align-self:stretch}
+.r{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;align-items:baseline;padding:10px 0;border-top:1px solid var(--line)}
+.r:first-child{border-top:0}
+.r .amt{font:500 16px var(--f-num);text-align:right;white-space:nowrap}
+.r .d{grid-column:1/3;font-size:12px;color:var(--muted)}
+.r.tot{border-top:2px solid var(--ink)}
+.r.tot b,.r.tot .amt{font-weight:700}
+.notes{display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--muted);border-top:1px dashed var(--line);padding-top:12px;align-self:stretch}
+.notes .w{color:var(--warn)}
+ul.plain{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:14px}
+details{border-top:1px solid var(--line);padding-top:10px}
+details:first-of-type{border-top:0;padding-top:0}
+summary{cursor:pointer;font-weight:500}
+summary .tag{font-size:11px;font-weight:700;padding:1px 7px;border-radius:999px;margin-left:6px;white-space:nowrap}
+.tag.ok{background:var(--accent-soft);color:var(--accent)}
+.tag.mid{background:var(--gold-soft);color:var(--gold)}
+.tag.bad{background:var(--warn-soft);color:var(--warn)}
+details p{font-size:13px;color:var(--muted);margin-top:6px}
+.cta{background:var(--accent);color:var(--surface);border:0}
+.cta .sub,.cta h2{color:inherit}
+.cta .sub{opacity:.85}
+.contact{display:flex;align-items:center;justify-content:space-between;gap:10px;background:rgba(255,255,255,.12);border-radius:10px;padding:10px 12px}
+.contact .num{font-size:19px;user-select:all}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+.btn{appearance:none;border:1px solid currentColor;background:transparent;color:inherit;font:500 14px var(--f-body);padding:7px 12px;border-radius:8px;cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn.solid{background:var(--surface);color:var(--accent);border-color:var(--surface)}
+.btn:focus-visible{outline:2px solid var(--surface);outline-offset:2px}
+footer{font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:6px;padding:0 4px}
+footer ul{margin:0;padding-left:16px}
+footer a{color:var(--accent)}
+@media print{.cta,.sample{display:none}}
+</style>
+<style>
+/* 이 페이지만: 날짜 목록, 단계 제목, 법정/권장 표시 */
+select.in,input.in{width:100%;min-width:0;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:500 15px var(--f-body);padding:8px}
+input.in[type=date]{font-family:var(--f-num)}
+.f.one{grid-template-columns:minmax(0,1fr) minmax(0,150px) 0}
+.phase{display:flex;flex-direction:column;align-self:stretch}
+.phase h3{font-size:13px;margin:14px 0 2px;color:var(--accent);font-weight:700}
+.phase h3:first-child{margin-top:0}
+.ev{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;align-items:baseline;padding:10px 0;border-top:1px solid var(--line)}
+.ev .t{font-weight:500}
+.ev .d{font:500 15px var(--f-num);text-align:right;white-space:nowrap}
+.ev .why{font-size:12px;color:var(--muted)}
+.ev .dd{font:500 12px var(--f-num);color:var(--muted);text-align:right;white-space:nowrap}
+.ev.law .t::after{content:"법정";font-size:10px;font-weight:700;color:var(--warn);background:var(--warn-soft);border-radius:999px;padding:1px 6px;margin-left:6px;vertical-align:2px}
+.ev.rec .t::after{content:"권장";font-size:10px;font-weight:700;color:var(--gold);background:var(--gold-soft);border-radius:999px;padding:1px 6px;margin-left:6px;vertical-align:2px}
+.ev.key .d,.ev.key .t{color:var(--warn)}
+.ev.past{opacity:.55}
+.ev .rel{font:500 13px var(--f-body);color:var(--muted)}
+.tools{display:flex;gap:8px;flex-wrap:wrap}
+.tools .btn{color:var(--accent)}
+.tools .btn.solid{background:var(--accent);color:var(--surface);border-color:var(--accent)}
+@media print{body{background:#fff}.card{border:0;padding:6px 0}#input,.tools,footer a,.howto{display:none}.ev.past{opacity:1}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header style="display:flex;flex-direction:column;gap:8px;padding:4px 4px 6px">
+    <span class="eyebrow">지인회계법인 · 외부감사 준비 일정표</span>
+    <h1>외부감사 1년 일정, 캘린더에 한 번에 넣으세요</h1>
+    <p class="sub">결산월과 감사받는 사업연도를 고르면 감사인 선임부터 감사보고서 공시까지 법정 기한과 실무 일정을 날짜로 뽑아 드립니다. 휴대폰·아웃룩·구글 캘린더에 넣는 파일도 받을 수 있습니다.</p>
+  </header>
+
+  <section class="card" id="input" aria-labelledby="h-in">
+    <div class="card-head"><h2 id="h-in">입력</h2></div>
+    <div class="f one"><label for="fym">결산월</label><select id="fym" class="in"></select><span></span></div>
+    <div class="f one"><label for="fy">감사받는 사업연도</label><select id="fy" class="in"></select><span></span></div>
+    <div class="f one"><label for="agm">정기주주총회 예정일</label><input id="agm" class="in" type="date"><span></span></div>
+    <p class="hint">정기총회 날짜를 모르면 그대로 두세요. 결산 후 3개월째 하순으로 잡았습니다. 날짜를 바꾸면 재무제표 제출·감사보고서 수령 같은 기한이 같이 움직입니다.</p>
+    <label class="chk"><input type="checkbox" id="first" checked><span>처음 외부감사를 받습니다 (직전 사업연도에 감사를 받지 않음)</span></label>
+    <label class="chk" id="reuse-row" hidden><input type="checkbox" id="reuse"><span>직전 사업연도 감사인을 다시 선임합니다</span></label>
+    <label class="chk"><input type="checkbox" id="small"><span>자본금 10억원 미만 회사입니다 (주총 소집통지 10일 전)</span></label>
+  </section>
+
+  <section class="card" aria-live="polite" aria-labelledby="h-res">
+    <div class="card-head">
+      <h2 id="h-res">일정표</h2>
+      <p class="sub" id="res-sub"></p>
+    </div>
+    <div class="tools">
+      <button class="btn solid" type="button" id="ics">캘린더 파일 받기 (.ics)</button>
+      <button class="btn" type="button" id="print">인쇄·PDF</button>
+    </div>
+    <p class="hint howto">받은 파일을 휴대폰에서 열면 캘린더에 바로 추가됩니다. 구글 캘린더는 설정 → 가져오기, 아웃룩은 파일을 끌어다 놓으면 됩니다. 법정 기한에는 1주 전 알림이 같이 들어갑니다.</p>
+    <div class="phase" id="list"></div>
+    <div class="notes" id="notes"></div>
+  </section>
+
+  <section class="card cta" aria-labelledby="h-cta">
+    <div class="card-head">
+      <h2 id="h-cta">일정 맞추기 어려우면 미리 상의하세요</h2>
+      <p class="sub">감사계획과 견적은 무료로 안내해 드립니다. 처음 감사를 받는 회사라면 기말 재고실사 전에 연락 주시면 기초잔액 문제를 미리 막을 수 있습니다.</p>
+    </div>
+    <div class="contact">
+      <div style="display:flex;flex-direction:column;min-width:0">
+        <span style="font-size:12px;opacity:.85">이재강 공인회계사 직통</span>
+        <span class="num">010-6624-2061</span>
+      </div>
+      <button class="btn solid" type="button" data-copy="010-6624-2061">번호 복사</button>
+    </div>
+    <div class="btns">
+      <a class="btn" href="tel:01066242061">전화 걸기</a>
+      <button class="btn" type="button" data-copy="ljkdlworkd@gmail.com">이메일 주소 복사</button>
+    </div>
+    <p style="font-size:12px;opacity:.85">ljkdlworkd@gmail.com · 서울 강남구 테헤란로103길 6, 5층 지인회계법인</p>
+  </section>
+
+  <footer>
+    <b>기한 근거</b>
+    <ul>
+      <li>감사인 선임: 외부감사법 제10조 제1항(사업연도 개시일부터 45일 이내), 제2항(직전 사업연도에 감사를 받지 않은 회사는 4개월 이내)</li>
+      <li>선임 보고: 외부감사법 제12조, 시행령 제18조(감사계약일부터 2주 이내 증권선물위원회에 전자문서 제출, 주주에게 문서 통지 또는 홈페이지 공고). 대형비상장·금융회사가 아닌 회사가 직전 감사인을 다시 선임하면 회사의 보고는 생략할 수 있습니다</li>
+      <li>재무제표 제출: 외부감사법 제6조 제2항, 시행령 제8조 제1항(정기총회 6주 전까지 감사인에게), 상법 제447조의3(정기총회 6주 전까지 감사에게)</li>
+      <li>감사보고서: 시행령 제27조(감사인은 정기총회 1주 전까지 회사에, 정기총회 종료 후 2주 이내 증권선물위원회·한국공인회계사회에 제출), 재무제표 비치 상법 제448조(정기총회 1주 전부터)</li>
+      <li>승인받은 재무제표 제출: 외부감사법 제23조 제3항, 시행령 제27조 제5항(승인일부터 2주 이내. 감사보고서에 첨부된 재무제표와 같으면 생략 가능)</li>
+      <li>주총 소집통지: 상법 제363조(2주 전, 자본금 10억원 미만은 10일 전). 법인세 신고: 법인세법 제60조(사업연도 종료일이 속하는 달의 말일부터 3개월, 감사 미종결 시 1개월 연장 신청 가능)</li>
+    </ul>
+    <p>'이내' 기한이 주말이면 다음 월요일로, '○주 전까지' 기한이 주말이면 앞 금요일로 표시했습니다. 공휴일은 반영하지 않았으니 연휴가 낀 날짜는 한 번 더 확인하세요. 권장 일정은 실무 관행에 따른 예시입니다. 상장회사, 대형비상장주식회사, 금융회사, 연결재무제표 작성 회사의 추가 기한은 넣지 않았습니다. 입력한 값은 이 기기 안에서만 쓰이고 어디로도 전송되지 않습니다.</p>
+    <p><a href="../">지인회계법인의 다른 무료 도구 보기</a></p>
+  </footer>
+</div>
+
+<script>
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  var WD = ["일","월","화","수","목","금","토"];
+  function addDays(d,n){ var x = new Date(d); x.setDate(x.getDate()+n); return x; }
+  function addMonths(d,n){
+    var x = new Date(d.getFullYear(), d.getMonth()+n, 1), last = new Date(x.getFullYear(), x.getMonth()+1, 0).getDate();
+    x.setDate(Math.min(d.getDate(), last)); return x;
+  }
+  function fwd(d){ var w = d.getDay(); return w === 6 ? addDays(d,2) : w === 0 ? addDays(d,1) : d; }   // '이내' 기한
+  function back(d){ var w = d.getDay(); return w === 6 ? addDays(d,-1) : w === 0 ? addDays(d,-2) : d; } // '전까지' 기한
+  function fmt(d){ return d.getFullYear()+"."+(d.getMonth()+1)+"."+d.getDate()+" ("+WD[d.getDay()]+")"; }
+  function iso(d){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+  function parse(s){ var p = (s||"").split("-"); if (p.length !== 3) return null; var d = new Date(+p[0], +p[1]-1, +p[2]); return isNaN(d) ? null : d; }
+  var today = new Date(); today.setHours(0,0,0,0);
+  function dday(d){ var n = Math.round((d - today)/86400000); return n > 0 ? "D-"+n : n === 0 ? "오늘" : "지남"; }
+
+  // 결산월·사업연도 선택지
+  for (var m = 12; m >= 1; m--) { var o = document.createElement("option"); o.value = m; o.textContent = m + "월"; $("fym").appendChild(o); }
+  function fyLabel(startY, fym){ return fym === 12 ? startY + " 사업연도 (" + startY + ".1~12)" : startY + "." + (fym+1) + " 개시 (" + startY + "." + (fym+1) + "~" + (startY+1) + "." + fym + ")"; }
+  function fillFy(keep){
+    var fym = +$("fym").value, opts = [], def = null;
+    for (var y = today.getFullYear() - 1; y <= today.getFullYear() + 2; y++) {
+      var start = new Date(y, fym % 12, 1);   // 12월 결산이면 y.1.1, 3월 결산이면 y.4.1
+      opts.push({ y:y, start:start });
+      if (def === null && start > today) def = y;
+    }
+    $("fy").innerHTML = opts.map(function(o){ return '<option value="' + o.y + '">' + fyLabel(o.y, fym).replace(/ \(.*$/, "") + '</option>'; }).join("");
+    $("fy").value = keep && opts.some(function(o){ return String(o.y) === keep; }) ? keep : def;
+  }
+
+  // 주소 매개변수 (예측기에서 넘어올 때): ?fym=12&fy=2027&first=1
+  var q = {}; location.search.replace(/^\?/,"").split("&").forEach(function(kv){ var p = kv.split("="); if (p[0]) q[p[0]] = decodeURIComponent(p[1]||""); });
+  if (q.fym && +q.fym >= 1 && +q.fym <= 12) $("fym").value = q.fym;
+  fillFy(q.fy);
+  if (q.first === "0") $("first").checked = false;
+
+  var agmTouched = false;
+  function period(){
+    var fym = +$("fym").value, y = +$("fy").value;
+    var start = new Date(y, fym % 12, 1);
+    var end = addDays(addMonths(start, 12), -1);
+    var prevEnd = addDays(start, -1);
+    return { fym:fym, start:start, end:end, prevEnd:prevEnd };
+  }
+  function defaultAgm(p){ return back(addDays(addMonths(new Date(p.end.getFullYear(), p.end.getMonth(), 1), 4), -8)); } // 결산 후 3개월째 말일 1주 전쯤
+
+  function build(){
+    var p = period(), first = $("first").checked, reuse = !first && $("reuse").checked, small = $("small").checked;
+    if (!agmTouched) $("agm").value = iso(defaultAgm(p));
+    var agm = parse($("agm").value) || defaultAgm(p);
+    var ev = [];
+    function add(phase, t, d, why, kind, opt){ ev.push(Object.assign({ phase:phase, t:t, d:d, why:why, kind:kind }, opt || {})); }
+
+    var selDeadline = fwd(first ? addDays(addMonths(p.start, 4), -1) : addDays(p.start, 44));
+    if (first) {
+      add(0, "감사인 후보와 상의 시작", addDays(p.prevEnd, -45), "처음 감사라면 전기말 재고실사 입회와 기초잔액 확인 방법을 먼저 정해야 합니다.", "rec");
+      add(0, "전기말 재고실사 (감사인 입회)", p.prevEnd, "첫 감사의 기초 재고를 확인하는 실사입니다. 이때 감사인이 입회하지 못하면 대체 절차가 길어지고 의견에 영향을 줄 수 있습니다.", "rec");
+    }
+    add(1, "감사인 선임 기한", selDeadline, first ? "직전 사업연도에 감사를 받지 않은 회사: 사업연도 개시일부터 4개월 이내" : "사업연도 개시일부터 45일 이내", "law", { key:true, alarm:true });
+    if (!reuse) add(1, "증권선물위원회 선임 보고", fwd(addDays(selDeadline, 14)), "감사계약 체결일부터 2주 이내 (선임 기한 마지막 날 계약한다고 보고 계산). 감사계약서 사본 등을 전자문서로 제출하고 감사인도 따로 제출합니다.", "law", { alarm:true, rel:"계약일 + 2주" });
+    add(1, "주주에게 선임 사실 통지·공고", null, "주주에게 문서로 통지하거나 홈페이지에 공고. 또는 선임 후 처음 열리는 정기총회에 보고합니다.", "law", { rel:"선임 후" });
+
+    add(2, "중간감사 일정 협의", addDays(p.end, -100), "하반기에 내부통제와 주요 거래를 미리 보면 기말 감사가 짧아집니다. 보통 사업연도 3분기 무렵입니다.", "rec");
+    add(2, "금융기관·거래처 조회 준비", addDays(p.end, -21), "은행, 주요 매출처·매입처 담당자와 연락처를 정리해 두면 조회서 회신이 빨라집니다.", "rec");
+    add(2, "기말 재고실사 (감사인 입회)", p.end, "결산일 실사. 현금·유가증권·어음 실사도 함께 합니다.", "rec", { alarm:true });
+
+    var fsDue = back(addDays(agm, -42));
+    add(3, "결산 마감·계정별 명세서 준비", back(addDays(fsDue, -10)), "재무제표 제출 전에 계정별 명세서와 증빙을 맞춰 두면 감사가 빨라집니다.", "rec");
+    add(3, "재무제표 감사인 제출", fsDue, "정기총회 6주 전까지 감사인에게 (상법상 감사에게도 같은 기한)", "law", { key:true, alarm:true });
+    add(3, "기말감사 현장", back(addDays(fsDue, 7)), "재무제표 제출 뒤 1~2주 안에 현장 감사가 진행되는 것이 일반적입니다.", "rec");
+    add(3, "정기총회 소집통지 발송", back(addDays(agm, small ? -10 : -14)), small ? "자본금 10억원 미만: 주총일 10일 전까지" : "주총일 2주 전까지 서면 또는 동의한 주주에게 전자문서", "law", { alarm:true });
+    add(3, "감사보고서 수령·재무제표 비치", back(addDays(agm, -7)), "감사인은 정기총회 1주 전까지 감사보고서를 회사에 제출하고, 회사는 이때부터 재무제표와 감사보고서를 본점에 비치합니다.", "law", { key:true, alarm:true });
+    add(3, "정기주주총회", agm, "재무제표 승인", "law");
+
+    var taxDue = fwd(addDays(new Date(p.end.getFullYear(), p.end.getMonth() + 4, 1), -1));
+    add(4, "법인세 신고 기한", taxDue, "사업연도 종료일이 속하는 달의 말일부터 3개월. 감사가 끝나지 않아 결산이 확정되지 않았다면 기한 전에 1개월 연장을 신청할 수 있습니다(이자 상당액 가산).", "law", { key:true, alarm:true });
+    add(4, "감사보고서 공시 (감사인 제출)", fwd(addDays(agm, 14)), "감사인이 정기총회 종료 후 2주 이내 증권선물위원회·한국공인회계사회에 제출하면 전자공시(DART)에 올라갑니다.", "law");
+    add(4, "승인받은 재무제표 제출", fwd(addDays(agm, 14)), "총회 승인일부터 2주 이내 증권선물위원회에 제출. 감사보고서에 첨부된 재무제표와 같으면 제출하지 않아도 됩니다.", "law");
+
+    ev.forEach(function(e, i){ e.i = i; });
+    return { p:p, first:first, agm:agm, ev:ev };
+  }
+
+  var PH = ["감사 대상 사업연도 시작 전", "감사인 선임", "감사 대상 사업연도 중", "결산과 정기총회", "총회 이후"];
+  var cur = null;
+  function render(){
+    $("reuse-row").hidden = $("first").checked;
+    var r = cur = build(), p = r.p;
+    $("res-sub").textContent = fyLabel(+$("fy").value, p.fym) + " · 정기총회 " + fmt(r.agm) + (r.first ? " · 첫 감사 기준" : "");
+    var html = "", last = -1;
+    var sorted = r.ev.slice().sort(function(a,b){ return a.phase - b.phase || ((a.d ? +a.d : 9e15) - (b.d ? +b.d : 9e15)) || a.i - b.i; });
+    sorted.forEach(function(e){
+      if (e.phase !== last) { html += "<h3>" + PH[e.phase] + "</h3>"; last = e.phase; }
+      var past = e.d && e.d < today;
+      html += '<div class="ev ' + e.kind + (e.key ? " key" : "") + (past ? " past" : "") + '"><span class="t">' + e.t + '</span>' +
+              '<span class="d">' + (e.d ? fmt(e.d) : '<span class="rel">' + e.rel + '</span>') + '</span>' +
+              '<span class="why">' + e.why + (e.d && e.rel ? " (" + e.rel + ")" : "") + '</span><span class="dd">' + (e.d ? dday(e.d) : "") + '</span></div>';
+    });
+    $("list").innerHTML = html;
+    var notes = [];
+    if (r.agm - p.end > 100 * 86400000) notes.push('<span class="w">정기총회가 결산일부터 3개월을 넘깁니다. 정관의 정기총회 시기와 주주명부 기준일을 확인하세요.</span>');
+    if (r.agm <= p.end) notes.push('<span class="w">정기총회 날짜가 결산일보다 앞섭니다. 날짜를 다시 확인하세요.</span>');
+    notes.push("기한이 공휴일이면 실제 기한은 다음 영업일입니다. 설·추석 연휴가 낀 날짜는 한 번 더 확인하세요.");
+    $("notes").innerHTML = notes.map(function(t){ return "<p>" + t + "</p>"; }).join("");
+  }
+
+  // .ics 만들기 (종일 일정, 법정 기한은 1주 전 알림)
+  function esc(s){ return String(s).replace(/\\/g,"\\\\").replace(/;/g,"\\;").replace(/,/g,"\\,").replace(/\n/g,"\\n"); }
+  function ymd(d){ return iso(d).replace(/-/g,""); }
+  // 한 줄 75바이트 제한(RFC 5545): 한글은 3바이트라 글자 수가 아니라 바이트로 자른다
+  var enc = new TextEncoder();
+  function fold(line){
+    var out = [], buf = "", n = 0, lim = 73;
+    Array.from(line).forEach(function(ch){
+      var b = enc.encode(ch).length;
+      if (n + b > lim) { out.push(buf); buf = " "; n = 1; }
+      buf += ch; n += b;
+    });
+    out.push(buf); return out.join("\r\n");
+  }
+  function makeIcs(){
+    var r = cur, stamp = new Date().toISOString().replace(/[-:]/g,"").replace(/\.\d+Z$/,"Z");
+    var L = ["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//jiin-cpa//audit-schedule//KO","CALSCALE:GREGORIAN","METHOD:PUBLISH","X-WR-CALNAME:외부감사 일정"];
+    r.ev.filter(function(e){ return e.d; }).forEach(function(e, n){
+      L.push("BEGIN:VEVENT");
+      L.push("UID:audit-" + ymd(r.p.start) + "-" + n + "@leejaekang.github.io");
+      L.push("DTSTAMP:" + stamp);
+      L.push("DTSTART;VALUE=DATE:" + ymd(e.d));
+      L.push("DTEND;VALUE=DATE:" + ymd(addDays(e.d, 1)));
+      L.push(fold("SUMMARY:" + esc((e.kind === "law" ? "[법정] " : "[권장] ") + e.t)));
+      L.push(fold("DESCRIPTION:" + esc(e.why + "\n\n지인회계법인 외부감사 준비 일정표 https://leejaekang.github.io/schedule/")));
+      L.push("TRANSP:TRANSPARENT");
+      if (e.alarm) { L.push("BEGIN:VALARM","ACTION:DISPLAY",fold("DESCRIPTION:" + esc(e.t + " 1주 전")),"TRIGGER:-P7D","END:VALARM"); }
+      L.push("END:VEVENT");
+    });
+    L.push("END:VCALENDAR");
+    return L.join("\r\n") + "\r\n";
+  }
+  $("ics").addEventListener("click", function(){
+    var r = cur;
+    var blob = new Blob([makeIcs()], { type:"text/calendar;charset=utf-8" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "외부감사일정_" + ymd(r.p.start).slice(0,6) + ".ics";
+    document.body.appendChild(a); a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  });
+  $("print").addEventListener("click", function(){ window.print(); });
+
+  $("fym").addEventListener("change", function(){ fillFy($("fy").value); agmTouched = false; render(); });
+  $("fy").addEventListener("change", function(){ agmTouched = false; render(); });
+  $("agm").addEventListener("change", function(){ agmTouched = !!$("agm").value; render(); });
+  ["first","reuse","small"].forEach(function(id){ $(id).addEventListener("change", render); });
+
+  document.querySelectorAll("[data-copy]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var text = b.getAttribute("data-copy"), orig = b.textContent;
+      function ok(){ b.textContent = "복사됨"; setTimeout(function(){ b.textContent = orig; }, 1500); }
+      function fallback(){ b.textContent = "길게 눌러 복사"; setTimeout(function(){ b.textContent = orig; }, 2000); }
+      try { navigator.clipboard.writeText(text).then(ok, fallback); } catch(e){ fallback(); }
+    });
+  });
+
+  render();
+  window.__calc = build; window.__ics = makeIcs;
+})();
+</script>
+</body>
+</html>

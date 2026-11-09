@@ -176,6 +176,7 @@ footer a{color:var(--accent)}
     <div class="big num" id="big">-</div>
     <p class="sub" id="res-sub"></p>
     <div class="dates" id="dates"></div>
+    <a id="sch-link" href="../schedule/" style="color:var(--accent);font-size:14px;font-weight:500" hidden>선임부터 감사보고서까지 1년 일정을 캘린더에 넣기 →</a>
     <div class="notes" id="notes"></div>
   </section>
 
@@ -354,6 +355,8 @@ footer a{color:var(--accent)}
         $("res-sub").textContent = basis + "에서 " + why + "이 되어 기준" + (f.big ? "을" : " " + r.need + "개 이상을") + " 넘게 됩니다. 그 다음 해인 " + name + "부터 외부감사 대상입니다.";
       }
       var deadline = rollWeekend(addDays(addMonths(start, 4), -1));
+      $("sch-link").href = "../schedule/?fym=" + r.fym + "&fy=" + start.getFullYear() + "&first=1";
+      $("sch-link").hidden = f.kind === "실적";
       dates.push({ key:true, t:"감사인 선임 기한", d:deadline, why:"처음 감사받는 회사는 사업연도 개시일부터 4개월 이내 (외부감사법 제10조 제2항)" });
       if (f.kind !== "실적") {
         dates.push({ t:"권장: 감사인 미리 정하기", d:addDays(fyEnd, -30), why:"기말 재고실사에 감사인이 입회하려면 이때까지 정하는 것이 좋습니다." });
@@ -364,6 +367,7 @@ footer a{color:var(--accent)}
     } else {
       big.innerHTML = "<small>" + yl(r.years[r.years.length-1].y) + " 결산까지</small> 대상 아님";
       big.className = "big num ok";
+      $("sch-link").hidden = true;
       $("res-sub").textContent = "지금 추세대로면 " + yl(r.years[r.years.length-1].y) + " 결산까지 기준을 넘지 않습니다. 아래 '기준까지 남은 거리'를 참고하세요.";
     }
 
