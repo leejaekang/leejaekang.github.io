@@ -184,6 +184,7 @@ footer ul{margin:0;padding-left:16px}
     </div>
     <div class="rows" id="rows"></div>
     <p class="note" id="verdict-note"></p>
+    <a id="grow-link" href="../grow/" style="color:var(--accent);font-size:14px;font-weight:500;text-decoration:none" hidden>몇 년부터 대상이 될지 예측해 보기 →</a>
   </section>
 
   <section class="card" id="dates-card" aria-labelledby="h-dates">
@@ -200,6 +201,10 @@ footer ul{margin:0;padding-left:16px}
       <p class="progress" id="progress"></p>
     </div>
     <div id="todos" style="display:flex;flex-direction:column;gap:16px"></div>
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <a id="sch-link" href="../schedule/" style="color:var(--accent);font-size:14px;font-weight:500;text-decoration:none">감사 1년 일정을 캘린더에 넣기 →</a>
+      <a href="../ready/" style="color:var(--accent);font-size:14px;font-weight:500;text-decoration:none">우리 회사 첫 감사 준비 상태 점검하기 →</a>
+    </div>
   </section>
 
   <section class="card cta" aria-labelledby="h-cta">
@@ -361,6 +366,8 @@ footer ul{margin:0;padding-left:16px}
     $("dates-card").hidden = !r.target;
     $("todo-card").hidden = !r.target;
     if (r.target) { renderDates(r, fyEnd, start, end); renderTodos(r, fyEnd, start, end); }
+    $("grow-link").hidden = r.target;
+    $("sch-link").href = "../schedule/?fym=" + (fyEnd.getMonth()+1) + "&fy=" + start.getFullYear() + "&first=" + (r.audited ? "0" : "1");
   }
 
   function chkRowHtml(c){
