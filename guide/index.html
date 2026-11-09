@@ -26,6 +26,11 @@ p{margin:0}
 .page img{display:block;width:100%;height:auto}
 .cap{font-size:13px;color:var(--muted)}
 footer{font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px}
+.tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px}
+.tools a{display:flex;flex-direction:column;gap:2px;border:1px solid var(--line);border-radius:8px;padding:10px 12px;color:var(--ink);text-decoration:none;background:color-mix(in srgb,var(--paper) 6%,transparent)}
+.tools a b{color:var(--accent);font-size:15px}
+.tools a span{font-size:13px;color:var(--muted)}
+.tools a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 </style>
 </head>
 <body>
@@ -42,6 +47,14 @@ footer{font-size:13px;color:var(--muted);border-top:1px solid var(--line);paddin
     <a class="btn" href="insert.pdf" target="_blank" rel="noopener">인쇄용 PDF 열기</a>
     <span class="cap">A4 2쪽 · PDF를 연 뒤 인쇄하시면 됩니다.</span>
   </div>
+
+  <span class="cap">귀사 숫자로 바로 확인해 보세요 (무료, 입력값은 저장되지 않습니다)</span>
+  <nav class="tools" aria-label="외부감사 준비 도구">
+    <a href="../check/"><b>외부감사 대상 자가진단 →</b><span>올해 대상인지, 감사인 선임기한은 언제인지</span></a>
+    <a href="../grow/"><b>외감 진입 시기 예측기 →</b><span>최근 2~3년 숫자로 몇 년부터 대상이 되는지</span></a>
+    <a href="../schedule/"><b>외부감사 준비 일정표 →</b><span>귀사 결산월·주총일 기준 날짜, 캘린더 파일로 받기</span></a>
+    <a href="../ready/"><b>첫 감사 준비 자가진단 →</b><span>준비 점수와 감사 때 요청받을 자료 목록(엑셀)</span></a>
+  </nav>
 
   <span class="cap">앞면 · 2027 사업연도 외부감사 준비 일정표</span>
   <div class="page"><img src="page1.png" alt="2027 사업연도 외부감사 준비 일정표: 감사인 선임기한 2027년 2월 15일, 선임 보고 계약 후 2주, 처음 감사받는 회사 2027년 4월 30일, 연간 일정과 준비 자료" width="1240" height="1754"></div>
