@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="재무제표 숫자를 넣으면 같은 업종·규모의 회사들과 비교한 결과지가 나옵니다. 회원가입 없이 무료로 쓸 수 있고 입력한 숫자는 저장하거나 전송하지 않습니다.">
+<meta name="description" content="재무제표 숫자를 넣으면 같은 업종·규모의 회사들과 비교한 결과지가 나옵니다. 회원가입 없이 쓸 수 있고 입력한 숫자는 저장하거나 전송하지 않습니다.">
 <meta property="og:title" content="재무 건강검진기">
 <meta property="og:description" content="우리 회사 재무 상태, 같은 업종과 비교해 보세요.">
 <meta property="og:type" content="website">
@@ -341,7 +341,7 @@ function render(){
   <div class="btns"><button type="button" id="copy">결과 요약 복사</button><button type="button" class="primary" id="print" hidden>결과지 인쇄·PDF 저장</button></div>
   <div class="foot">
     <p class="contact">결과가 궁금하시면 해설해 드립니다. 지인회계법인 이재강 회계사 010-6624-2061</p>
-    <p class="req"><a href="https://docs.google.com/forms/d/e/1FAIpQLSfaEsLoOdYhFwksH5v3QODxUkRyrGhUitBA-r2QeivDqxpBfA/viewform" target="_blank" rel="noopener">결과 해설 요청하기</a><span>무료이며 감사인 선임이나 계약 여부와 관계없습니다. 새 창에서 구글 설문이 열리며, 입력하신 재무 숫자와 결과는 넘어가지 않습니다.</span></p>
+    <p class="req"><a href="https://docs.google.com/forms/d/e/1FAIpQLSfaEsLoOdYhFwksH5v3QODxUkRyrGhUitBA-r2QeivDqxpBfA/viewform" target="_blank" rel="noopener">결과 해설 요청하기</a><span>새 창에서 구글 설문이 열리며, 입력하신 재무 숫자와 결과는 넘어가지 않습니다.</span></p>
     <p>비교 자료: 금융감독원 전자공시(DART)에 2026년 상반기 공시된 비상장 회사의 2025년 12월 결산 감사보고서 중 무작위 표본 ${B.meta.used.toLocaleString("ko-KR")}곳, 업종별 비교는 그중 업종을 확인한 ${B.meta.usedInd.toLocaleString("ko-KR")}곳(K-IFRS 적용 회사, 자산 1,500억 초과 회사, 확인된 금융업 제외). 외부감사를 받는 회사 기준이라 규모가 작은 회사나 개인사업자는 차이가 날 수 있습니다.</p>
     <p>이 결과지는 입력한 숫자로 계산한 참고 자료이며 감사의견, 신용평가, 투자·세무 판단이 아닙니다.</p>
   </div>`;
