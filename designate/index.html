@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>감사인 지정 사유 자가진단</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@700&family=IBM+Plex+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* 고용 세액공제 계산기와 같은 집안: 입력 → 큰 숫자 → 내역 → 알아 둘 점 → 상담 */
+:root{
+  --bg:#f3f5f5; --surface:#ffffff; --ink:#122a2e; --muted:#5b6c6f; --line:#d5dddd;
+  --accent:#0d6b66; --accent-soft:#e2efee; --gold:#9a6a00; --gold-soft:#fbf1dc; --warn:#b3261e; --warn-soft:#fbe9e7;
+  --f-display:"Gowun Batang","Nanum Myeongjo",serif;
+  --f-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --f-num:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0c1618; --surface:#132226; --ink:#e4eded; --muted:#93a6a8; --line:#25393d;
+  --accent:#46b9ae; --accent-soft:#16312f; --gold:#e7b84a; --gold-soft:#332611; --warn:#ff8a80; --warn-soft:#3a1c1a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0c1618; --surface:#132226; --ink:#e4eded; --muted:#93a6a8; --line:#25393d;
+  --accent:#46b9ae; --accent-soft:#16312f; --gold:#e7b84a; --gold-soft:#332611; --warn:#ff8a80; --warn-soft:#3a1c1a; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.6;word-break:keep-all;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.app{max-width:520px;margin:0 auto;padding-block:20px 40px;display:flex;flex-direction:column;gap:14px}
+h1,h2{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.3}
+h1{font-size:26px} h2{font-size:18px}
+p{margin:0}
+.eyebrow{font-size:12px;letter-spacing:.06em;color:var(--accent);font-weight:700}
+.sub{color:var(--muted);font-size:14px}
+.num{font-family:var(--f-num);font-variant-numeric:tabular-nums}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:14px}
+.card-head{display:flex;flex-direction:column;gap:4px}
+.sample{font-size:12px;color:var(--gold);background:var(--gold-soft);border-radius:8px;padding:6px 10px}
+.seg{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg.three{grid-template-columns:repeat(3,1fr)}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label{text-align:center;padding:9px 4px;font-weight:500;cursor:pointer;color:var(--muted);font-size:14px}
+.seg input:checked+label{background:var(--accent);color:var(--surface)}
+.seg input:focus-visible+label{outline:2px solid var(--accent);outline-offset:-4px}
+.grp{display:flex;flex-direction:column;gap:6px}
+.grp>span{font-size:13px;color:var(--muted)}
+.f{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,132px) 30px;gap:8px;align-items:center}
+.f label{font-size:14px;line-height:1.35}
+.f input{width:100%;min-width:0;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:500 16px var(--f-num);padding:9px 10px;outline:none;text-align:right}
+.f input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.f .u{font-size:12px;color:var(--muted)}
+.chk{display:flex;gap:8px;align-items:flex-start;font-size:14px;line-height:1.45;cursor:pointer}
+.chk input{margin-top:3px;accent-color:var(--accent)}
+.hint{font-size:12px;color:var(--muted)}
+fieldset{border:0;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+legend{font-weight:700;font-size:14px;padding:0;margin-bottom:8px}
+.hero{align-items:flex-start}
+.big{font:500 34px var(--f-num);letter-spacing:-.02em;color:var(--gold);line-height:1.15}
+.big small{font-size:16px;color:var(--muted);margin-left:4px}
+.rows{display:flex;flex-direction:column;align-self:stretch}
+.r{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;align-items:baseline;padding:10px 0;border-top:1px solid var(--line)}
+.r:first-child{border-top:0}
+.r .amt{font:500 16px var(--f-num);text-align:right;white-space:nowrap}
+.r .d{grid-column:1/3;font-size:12px;color:var(--muted)}
+.r.tot{border-top:2px solid var(--ink)}
+.r.tot b,.r.tot .amt{font-weight:700}
+.notes{display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--muted);border-top:1px dashed var(--line);padding-top:12px;align-self:stretch}
+.notes .w{color:var(--warn)}
+ul.plain{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:14px}
+details{border-top:1px solid var(--line);padding-top:10px}
+details:first-of-type{border-top:0;padding-top:0}
+summary{cursor:pointer;font-weight:500}
+summary .tag{font-size:11px;font-weight:700;padding:1px 7px;border-radius:999px;margin-left:6px;white-space:nowrap}
+.tag.ok{background:var(--accent-soft);color:var(--accent)}
+.tag.mid{background:var(--gold-soft);color:var(--gold)}
+.tag.bad{background:var(--warn-soft);color:var(--warn)}
+details p{font-size:13px;color:var(--muted);margin-top:6px}
+.cta{background:var(--accent);color:var(--surface);border:0}
+.cta .sub,.cta h2{color:inherit}
+.cta .sub{opacity:.85}
+.contact{display:flex;align-items:center;justify-content:space-between;gap:10px;background:rgba(255,255,255,.12);border-radius:10px;padding:10px 12px}
+.contact .num{font-size:19px;user-select:all}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+.btn{appearance:none;border:1px solid currentColor;background:transparent;color:inherit;font:500 14px var(--f-body);padding:7px 12px;border-radius:8px;cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn.solid{background:var(--surface);color:var(--accent);border-color:var(--surface)}
+.btn:focus-visible{outline:2px solid var(--surface);outline-offset:2px}
+footer{font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:6px;padding:0 4px}
+footer ul{margin:0;padding-left:16px}
+footer a{color:var(--accent)}
+@media print{.cta,.sample{display:none}}
+</style>
+<style>
+/* 이 페이지만: 예/아니오 질문, 해당 사유 목록 */
+.q{display:flex;flex-direction:column;gap:6px;padding:10px 0;border-top:1px solid var(--line)}
+.q:first-of-type{border-top:0;padding-top:0}
+.q>span{font-size:14px;line-height:1.45}
+.q small{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+.q .seg{max-width:220px}
+.q .seg label{padding:6px 4px}
+.q.risk .seg input:checked+label{background:var(--warn)}
+.big.good{color:var(--accent)} .big.bad{color:var(--warn)}
+.hits{display:flex;flex-direction:column;align-self:stretch}
+.hit{padding:10px 0;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:3px}
+.hit:first-child{border-top:0}
+.hit b{color:var(--warn)}
+.hit.info b{color:var(--gold)}
+.hit .law{font-size:11px;color:var(--muted)}
+.hit span{font-size:13px}
+.f.one{grid-template-columns:minmax(0,1fr) minmax(0,110px) 30px}
+</style>
+</head>
+<body>
+<div class="app">
+  <header style="display:flex;flex-direction:column;gap:8px;padding:4px 4px 6px">
+    <span class="eyebrow">지인회계법인 · 감사인 지정 사유 자가진단</span>
+    <h1>우리 회사, 감사인을 지정받을 수 있는 사유가 있을까요</h1>
+    <p class="sub">감사인 지정을 받으면 회사가 감사인을 고를 수 없고, 증권선물위원회가 정한 회계법인과 2주 안에 계약해야 합니다. 비상장 회사에 해당하는 사유를 질문으로 바꿔 두었습니다. 답을 고르면 해당 사유와 피하는 방법을 알려 드립니다.</p>
+  </header>
+
+  <section class="card" id="input" aria-labelledby="h-in">
+    <div class="card-head"><h2 id="h-in">감사인 선임과 운영</h2>
+      <p class="sub">처음에는 문제가 없는 쪽으로 답이 골라져 있습니다. 귀사 상황과 다른 것만 바꾸세요.</p></div>
+    <div id="qs1"></div>
+
+    <div class="card-head" style="margin-top:8px"><h2>회사 상황</h2></div>
+    <div id="qs2"></div>
+
+    <div class="card-head" style="margin-top:8px"><h2>주기적 지정 (대형 비상장 회사)</h2>
+      <p class="sub">자산이 큰 비상장 주식회사 중 대주주가 지배하고 대표이사도 맡는 회사는 6년 자유선임 뒤 3년 지정을 받습니다.</p></div>
+    <div class="f one"><label for="assets">직전 사업연도 말 자산총액</label><input id="assets" inputmode="decimal" value="300"><span class="u">억원</span></div>
+    <label class="chk"><input type="checkbox" id="grp"><span>공시대상기업집단 소속 회사이거나 사업보고서 제출대상법인입니다 (기준 금액이 5천억원에서 1천억원으로 낮아짐)</span></label>
+    <label class="chk"><input type="checkbox" id="own" checked><span>대주주와 특수관계자 지분을 합치면 50% 이상입니다</span></label>
+    <label class="chk"><input type="checkbox" id="ceo" checked><span>대주주 본인이나 그 특수관계자가 대표이사입니다</span></label>
+  </section>
+
+  <section class="card hero" aria-live="polite" aria-labelledby="h-res">
+    <span class="eyebrow" id="h-res">진단 결과</span>
+    <div class="big" id="big" style="font-family:var(--f-display);font-size:26px"></div>
+    <p class="sub" id="res-sub"></p>
+    <div class="hits" id="hits"></div>
+  </section>
+
+  <section class="card" aria-labelledby="h-ctx">
+    <div class="card-head"><h2 id="h-ctx">지정을 받으면 달라지는 것</h2></div>
+    <ul class="plain">
+      <li><b>감사인을 고를 수 없습니다.</b> 증권선물위원회가 3개 사업연도 범위에서 회계법인을 정하고, 회사는 특별한 사유가 없으면 따라야 합니다(외부감사법 제11조 제4항).</li>
+      <li><b>계약 기한이 짧습니다.</b> 지정 통지를 받은 날(지정기준일)부터 2주 안에 감사계약을 맺어야 합니다(시행령 제17조 제6항).</li>
+      <li><b>다시 지정해 달라는 요청은 사유가 정해져 있습니다.</b> 외국투자가의 출자 조건, 지정감사인의 독립성 문제 등 법에서 정한 경우에만, 통지일부터 1주 안에 요청할 수 있습니다(시행령 제17조 제7항·제8항).</li>
+      <li><b>지정이 끝난 다음 해에는 그 감사인을 다시 선임할 수 없습니다</b>(외부감사법 제11조 제6항).</li>
+    </ul>
+    <p class="sub">그 밖에 감리 결과 회계처리기준 위반이 확인된 회사, 감사시간이 표준 감사시간보다 현저히 낮다고 인정된 회사, 주채권은행이 요청한 회사 등은 증권선물위원회 판단으로 지정될 수 있습니다.</p>
+    <p class="sub">기한 관리는 <a href="../schedule/" style="color:var(--accent)">외부감사 준비 일정표</a>에서 날짜로 확인할 수 있습니다.</p>
+  </section>
+
+  <section class="card cta" aria-labelledby="h-cta">
+    <div class="card-head">
+      <h2 id="h-cta">선임 절차, 미리 확인하세요</h2>
+      <p class="sub">감사계획과 견적은 무료로 안내해 드립니다. 선임 기한과 보고 서류도 함께 챙겨 드립니다.</p>
+    </div>
+    <div class="contact">
+      <div style="display:flex;flex-direction:column;min-width:0">
+        <span style="font-size:12px;opacity:.85">이재강 공인회계사 직통</span>
+        <span class="num">010-6624-2061</span>
+      </div>
+      <button class="btn solid" type="button" data-copy="010-6624-2061">번호 복사</button>
+    </div>
+    <div class="btns">
+      <a class="btn" href="tel:01066242061">전화 걸기</a>
+      <button class="btn" type="button" data-copy="ljkdlworkd@gmail.com">이메일 주소 복사</button>
+    </div>
+    <p style="font-size:12px;opacity:.85">ljkdlworkd@gmail.com · 서울 강남구 테헤란로103길 6, 5층 지인회계법인</p>
+  </section>
+
+  <footer>
+    <b>판단 근거</b>
+    <ul>
+      <li>지정 사유: 주식회사 등의 외부감사에 관한 법률 제11조 제1항(제1호~제5호, 제8호~제10호, 제12호), 같은 법 시행령 제14조 제6항</li>
+      <li>주기적 지정: 같은 법 제11조 제2항 제2호, 시행령 제15조 제6항·제7항(자산 5천억원, 공시대상기업집단 소속 또는 사업보고서 제출대상법인은 1천억원, 특수관계자는 법인세법 시행령 제43조 제8항), 제외 사유는 제11조 제3항</li>
+      <li>상장회사 전용 사유(연속 영업손실·영업현금흐름 마이너스·이자보상배율 1 미만, 관리종목, 최대주주·대표이사 잦은 교체, 횡령·배임 공소 등)는 넣지 않았습니다</li>
+    </ul>
+    <p>이 결과는 답한 내용으로 법 조문에 해당하는지를 보여 주는 참고 자료이며, 실제 지정 여부는 증권선물위원회가 정합니다. 경미한 위반은 지정 대상에서 빠질 수 있습니다. 입력한 값은 이 기기 안에서만 쓰이고 어디로도 전송되지 않습니다.</p>
+    <p><a href="../">지인회계법인의 다른 무료 도구 보기</a></p>
+  </footer>
+</div>
+
+<script>
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+
+  // [id, 질문, 설명, 위험한 답("y"/"n"), 해당 사유 제목, 근거, 피하는 방법, 기본 답, 정보성(지정 '요청 가능')]
+  var Q1 = [
+    ["deadline","올해 감사인을 선임 기한 안에 선임했거나 선임할 예정입니까?","계속 감사는 사업연도 개시일부터 45일, 처음 감사받는 회사는 4개월 이내","n",
+      "선임 기한 안에 감사인을 선임하지 않음","외부감사법 제11조 제1항 제2호",
+      "가장 흔한 지정 사유입니다. 12월 결산이면 계속 감사는 2월 14일(주말이면 다음 영업일), 처음 감사는 4월 30일까지 감사계약을 맺으세요.","y"],
+    ["selector","감사인을 감사(감사위원회)가 선정했습니까?","감사가 없는 유한회사는 회사(일정 규모 이상은 사원총회 승인)가 선정. 직전 감사인을 다시 선임하면 그 감사인","n",
+      "법에서 정한 사람이 아닌 다른 사람이 감사인을 선정함","외부감사법 제11조 제1항 제3호, 제10조 제4항",
+      "주식회사는 감사가 감사인을 선정하는 것이 원칙입니다. 대표이사가 정하고 감사는 서명만 하는 방식이라면 감사 명의의 선정 절차와 기록을 갖추세요.","y"],
+    ["prep","감사인(또는 소속 회계사)에게 재무제표 작성이나 회계처리 자문을 요청했거나 받았습니까?","분개 대행, 결산 대행, 회계처리 방법 결정에 관여하게 하는 것 포함","y",
+      "감사인이 재무제표를 대신 작성하거나 회계처리 자문을 함","외부감사법 제11조 제1항 제5호, 제6조 제6항",
+      "재무제표 작성은 회사 책임입니다. 결산·기장은 감사인이 아닌 별도의 세무대리인이나 내부 인력이 해야 합니다.","n"],
+    ["fee","감사보수·감사시간·투입 인력을 문서로 정했습니까?","감사(감사위원회)가 정하는 사항. 감사계약서에 들어 있으면 됩니다","n",
+      "감사보수·감사시간·인력을 문서로 정하지 않음","시행령 제14조 제6항 제3호 라목, 외부감사법 제10조 제5항",
+      "감사계약서나 별도 문서에 감사보수, 감사시간, 투입 인력을 적고 감사가 확인하도록 하세요.","y"],
+    ["report","선임 후 2주 안에 증권선물위원회에 보고하고 주주에게 통지(또는 공고)했습니까?","직전 감사인을 다시 선임한 일반 비상장 회사는 증권선물위원회 보고를 생략할 수 있음","n",
+      "감사인 선임 보고·통지·공고를 하지 않음","시행령 제14조 제6항 제3호 마목, 외부감사법 제12조",
+      "감사계약일부터 2주 안에 계약서 사본 등을 전자문서로 제출하고, 주주에게 문서로 통지하거나 홈페이지에 공고하세요.","y"],
+    ["fs","재무제표를 정기총회 6주 전까지 감사인에게 제출했습니까?","작년 결산 기준으로 답하세요. 처음 감사라면 '예'로 두세요","n",
+      "재무제표를 기한 안에 감사인에게 제출하지 않음","시행령 제14조 제6항 제3호 가목, 외부감사법 제6조 제2항",
+      "정기총회 6주 전까지 재무제표를 감사인에게 내야 합니다. 결산 마감일을 거꾸로 계산해 두세요.","y"]
+  ];
+  var Q2 = [
+    ["ipo","올해나 내년에 코스피·코스닥 상장을 준비하고 있습니까?","코넥스 상장은 제외","y",
+      "올해 또는 다음 사업연도에 상장하려는 회사","시행령 제14조 제6항 제1호",
+      "상장 예정 회사는 감사인 지정을 받습니다. 상장 일정과 지정 시점을 주관사와 함께 미리 맞추세요.","n"],
+    ["cancel","최근 감사인이 감사 방해 등을 이유로 감사계약을 해지했습니까?","자료 제출 거부, 감사 방해 등 감사인의 권한 행사를 막은 경우","y",
+      "감사인이 감사 방해 등을 이유로 계약을 해지한 회사","시행령 제14조 제6항 제2호",
+      "감사인의 자료 요청과 조회에 협조하지 않으면 계약 해지와 지정으로 이어질 수 있습니다.","n"],
+    ["fss","금융감독원 감리에서 회계처리기준 위반이 확인된 적이 있습니까?","증권선물위원회가 정하는 경미한 위반은 제외","y",
+      "감리 결과 회계처리기준 위반이 확인된 회사","외부감사법 제11조 제1항 제4호",
+      "감리 지적 사항을 바로잡고 재무제표 수정 여부를 감사인과 검토하세요.","n"],
+    ["bank","주채권은행 관리(기업구조조정 촉진법) 대상입니까?","주채권은행이 감사인 지정을 요청할 수 있음","y",
+      "주채권은행이 감사인 지정을 요청할 수 있는 회사","외부감사법 제11조 제1항 제8호",
+      "주채권은행과 협의 중이라면 감사인 지정 요청 가능성을 미리 확인하세요.","n",true],
+    ["self","회사가 스스로 감사인 지정을 받고 싶습니까?","주주 간 분쟁, 투자 유치 등으로 중립적인 감사인이 필요한 경우","y",
+      "회사가 원하면 지정을 요청할 수 있음","외부감사법 제11조 제1항 제1호",
+      "감사(감사위원회) 승인을 받아 선임 기한 안에 증권선물위원회에 감사인 지정을 요청할 수 있습니다.","n",true]
+  ];
+
+  function draw(list, box){
+    $(box).innerHTML = list.map(function(q){
+      return '<div class="q" id="q-' + q[0] + '"><span>' + q[1] + (q[2] ? "<small>" + q[2] + "</small>" : "") + '</span>' +
+        '<div class="seg" role="radiogroup" aria-label="' + q[1].replace(/"/g,"") + '">' +
+        '<input type="radio" name="' + q[0] + '" id="' + q[0] + '-y" value="y"' + (q[7] === "y" ? " checked" : "") + '><label for="' + q[0] + '-y">예</label>' +
+        '<input type="radio" name="' + q[0] + '" id="' + q[0] + '-n" value="n"' + (q[7] === "n" ? " checked" : "") + '><label for="' + q[0] + '-n">아니오</label>' +
+        '</div></div>';
+    }).join("");
+  }
+  draw(Q1, "qs1"); draw(Q2, "qs2");
+
+  function ans(id){ var e = document.querySelector('input[name="' + id + '"]:checked'); return e ? e.value : null; }
+  function num(id){ var v = parseFloat(String($(id).value).replace(/,/g,"")); return isNaN(v) ? 0 : Math.max(0, v); }
+
+  function judge(){
+    var hits = [], info = [];
+    Q1.concat(Q2).forEach(function(q){
+      var a = ans(q[0]), risky = a === q[3];
+      var el = $("q-" + q[0]); if (el) el.classList.toggle("risk", risky && !q[8]);
+      if (risky) (q[8] ? info : hits).push({ t:q[4], law:q[5], fix:q[6] });
+    });
+    var th = $("grp").checked ? 1000 : 5000, a = num("assets");
+    var periodic = a >= th && $("own").checked && $("ceo").checked;
+    return { hits:hits, info:info, periodic:periodic, th:th, assets:a };
+  }
+
+  function render(){
+    var r = judge(), big = $("big"), sub;
+    var n = r.hits.length + (r.periodic ? 1 : 0);
+    if (n === 0 && r.info.length === 0) {
+      big.textContent = "해당 사유 없음"; big.className = "big good";
+      sub = "답하신 내용으로는 비상장 회사에 적용되는 감사인 지정 사유에 해당하지 않습니다. 선임 기한과 보고 절차만 지키면 감사인을 직접 고를 수 있습니다.";
+    } else if (n === 0) {
+      big.textContent = "지정 가능성 있음"; big.className = "big";
+      sub = "회사의 의무 위반은 없지만, 아래 상황에서는 지정을 받거나 요청할 수 있습니다.";
+    } else {
+      big.textContent = "지정 사유 " + n + "개 해당"; big.className = "big bad";
+      sub = "아래 사유가 있으면 증권선물위원회가 지정한 회계법인을 감사인으로 선임하라는 요구를 받을 수 있습니다. 아직 바로잡을 수 있는 것부터 정리하세요.";
+    }
+    $("res-sub").textContent = sub;
+    var h = [];
+    r.hits.forEach(function(x){ h.push('<div class="hit"><b>' + x.t + '</b><span class="law">' + x.law + '</span><span>' + x.fix + '</span></div>'); });
+    if (r.periodic) h.push('<div class="hit"><b>주기적 지정 대상 (6년 자유선임 후 3년 지정)</b><span class="law">외부감사법 제11조 제2항 제2호, 시행령 제15조 제6항</span>' +
+      '<span>자산총액 ' + r.assets.toLocaleString("ko-KR") + '억원이 기준 ' + r.th.toLocaleString("ko-KR") + '억원 이상이고, 대주주가 지배하며 대표이사를 맡고 있습니다. 연속 6개 사업연도를 직접 선임하면 다음 3개 사업연도는 지정을 받습니다. 최근 6년 안에 감리를 받아 위반이 없었던 회사 등은 제외될 수 있습니다(제11조 제3항).</span></div>');
+    r.info.forEach(function(x){ h.push('<div class="hit info"><b>' + x.t + '</b><span class="law">' + x.law + '</span><span>' + x.fix + '</span></div>'); });
+    $("hits").innerHTML = h.join("");
+    $("hits").hidden = !h.length;
+  }
+
+  $("input").addEventListener("change", render);
+  $("input").addEventListener("input", render);
+  $("assets").addEventListener("change", function(e){
+    var raw = String(e.target.value).replace(/[^\d.]/g, "");
+    e.target.value = raw ? Number(raw).toLocaleString("ko-KR") : "";
+    render();
+  });
+
+  document.querySelectorAll("[data-copy]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var text = b.getAttribute("data-copy"), orig = b.textContent;
+      function ok(){ b.textContent = "복사됨"; setTimeout(function(){ b.textContent = orig; }, 1500); }
+      function fallback(){ b.textContent = "길게 눌러 복사"; setTimeout(function(){ b.textContent = orig; }, 2000); }
+      try { navigator.clipboard.writeText(text).then(ok, fallback); } catch(e){ fallback(); }
+    });
+  });
+
+  render();
+  window.__calc = judge;
+})();
+</script>
+</body>
+</html>
