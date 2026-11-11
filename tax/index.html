@@ -90,6 +90,20 @@ details th:first-child,details td:first-child{text-align:left}
 .btn:focus-visible{outline:2px solid var(--surface);outline-offset:2px}
 footer{font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:6px;padding:0 4px}
 footer ul{margin:0;padding-left:16px}
+.seg.four{grid-template-columns:repeat(4,1fr)}
+.ef{display:grid;grid-template-columns:1fr minmax(0,150px) auto;gap:8px;align-items:center}
+.ef label{font-size:14px}
+.ef input{width:100%;min-width:0;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:500 16px var(--f-num);padding:9px 10px;outline:none;text-align:right}
+.ef input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.chk{display:flex;gap:8px;align-items:flex-start;font-size:14px}
+.chk input{accent-color:var(--accent);width:18px;height:18px;margin-top:2px}
+.er{display:grid;grid-template-columns:1fr auto;gap:2px 12px;padding:9px 0;border-top:1px solid var(--line)}
+.er:first-child{border-top:0}
+.er .amt{font:500 15px var(--f-num);text-align:right}
+.er .d{grid-column:1/3;font-size:12px;color:var(--muted)}
+.verdict{border-radius:10px;padding:10px 12px;font-size:14px}
+.verdict.hi{background:var(--gold-soft);color:var(--ink)}
+.verdict.mid,.verdict.lo{background:var(--accent-soft);color:var(--ink)}
 </style>
 </head>
 <body>
@@ -101,6 +115,28 @@ footer ul{margin:0;padding-left:16px}
     <h1>직원이 늘었다면, 돌려받을 세금이 있을 수 있습니다</h1>
     <p class="sub">연도별 평균 직원 수만 넣으면 고용 세액공제로 받을 수 있었던 금액과 경정청구 기한을 계산합니다. 지난 5년 치는 지금도 돌려받을 수 있습니다.</p>
   </header>
+
+  <section class="card" id="etr" aria-labelledby="h-etr">
+    <div class="card-head">
+      <h2 id="h-etr">먼저, 법인세 유효세율로 보기</h2>
+      <p class="sub">손익계산서의 두 숫자만 넣으면 그해 세액공제를 얼마나 받았는지 가늠할 수 있습니다. 감사보고서를 공시하는 회사라면 DART에서 바로 확인할 수 있습니다.</p>
+    </div>
+    <p class="sample" id="etr-from" hidden>안내문에 적힌 귀사의 공시 숫자가 미리 들어 있습니다. 다른 해의 숫자로 바꿔 보셔도 됩니다.</p>
+    <div class="grp"><span>사업연도</span>
+      <div class="seg four" role="radiogroup" aria-label="사업연도">
+        <input type="radio" name="ey" id="ey-2023" value="2023"><label for="ey-2023">2023</label>
+        <input type="radio" name="ey" id="ey-2024" value="2024"><label for="ey-2024">2024</label>
+        <input type="radio" name="ey" id="ey-2025" value="2025" checked><label for="ey-2025">2025</label>
+        <input type="radio" name="ey" id="ey-2026" value="2026"><label for="ey-2026">2026</label>
+      </div>
+    </div>
+    <div class="ef"><label for="ept">법인세비용차감전순이익</label><input id="ept" inputmode="numeric" value="167,760"><span class="hint">만원</span></div>
+    <div class="ef"><label for="etx">법인세비용</label><input id="etx" inputmode="numeric" value="33,382"><span class="hint">만원</span></div>
+    <label class="chk"><input type="checkbox" id="eloc" checked><span>법인세비용에 지방소득세가 포함되어 있다 (대부분의 회사가 포함)</span></label>
+    <div id="etr-rows"></div>
+    <div class="verdict" id="etr-say"></div>
+    <p class="hint">세전이익을 과세표준으로 보고 계산한 간이 비교입니다. 접대비 한도 초과 같은 세무조정, 이월결손금, 이연법인세, 감면·비과세가 있으면 차이가 납니다. 중소기업 회계처리 특례로 '내야 할 법인세'를 그대로 비용으로 잡는 회사는 비교가 더 정확합니다.</p>
+  </section>
 
   <section class="card" id="input" aria-labelledby="h-in">
     <div class="card-head">
@@ -180,6 +216,7 @@ footer ul{margin:0;padding-left:16px}
     <ul>
       <li>2020~2022년 증가분: 조세특례제한법 제29조의7 (고용증대세액공제)</li>
       <li>2023~2025년 증가분: 같은 법 제29조의8 (통합고용세액공제, 2025년 시행분). 2023·2024년은 제29조의7과 선택 가능하나 금액이 큰 제29조의8로 계산</li>
+      <li>유효세율 비교의 법인세율 (법인세법 제55조): 2023~2025 사업연도 과세표준 2억원 이하 9%, 200억원 이하 19%, 3천억원 이하 21%, 초과 24%. 2026 사업연도부터 10·20·22·25%. 지방소득세는 법인세의 10%로 계산</li>
       <li>중소·중견기업은 증가한 해와 그 뒤 2년(총 3년), 그 외 기업은 총 2년 공제. 전체 인원이 처음 공제받은 해보다 줄면 그 해부터 공제가 끊기고, 청년 등 인원이 줄면 청년 몫이 끊깁니다</li>
       <li>경정청구 기한: 법정신고기한(법인 다음 해 3월 31일, 개인 5월 31일)부터 5년 (국세기본법 제45조의2)</li>
     </ul>
@@ -327,6 +364,60 @@ footer ul{margin:0;padding-left:16px}
   });
 
   window.__calc = calc;   // 점검용
+  render();
+})();
+</script>
+<script>
+(function(){
+  // 법인세 유효세율 점검: 세전이익에 법정세율을 그대로 적용한 금액과 실제 법인세비용을 비교 (금액 단위 만원)
+  var $ = function(id){ return document.getElementById(id); };
+  function n(id){ var v = parseFloat(String($(id).value).replace(/[^0-9.\-]/g, "")); return isNaN(v) ? 0 : v; }
+  function brackets(y){
+    var r = (y >= 2023 && y <= 2025) ? [0.09, 0.19, 0.21, 0.24] : [0.10, 0.20, 0.22, 0.25];
+    return [[20000, r[0]], [2000000, r[1]], [30000000, r[2]], [Infinity, r[3]]];
+  }
+  function corpTax(base, y){
+    var t = 0, prev = 0;
+    brackets(y).forEach(function(b){ if (base > prev) { t += (Math.min(base, b[0]) - prev) * b[1]; } prev = b[0]; });
+    return t;
+  }
+  function man(v){
+    v = Math.round(v); var neg = v < 0; v = Math.abs(v);
+    var eok = Math.floor(v / 10000), rest = v % 10000, s;
+    if (eok && rest) s = eok + "억 " + rest.toLocaleString("ko-KR") + "만원"; else if (eok) s = eok + "억원"; else s = rest.toLocaleString("ko-KR") + "만원";
+    return (neg ? "−" : "") + s;
+  }
+  function row(label, amt, d){ return '<div class="er"><b>' + label + '</b><span class="amt">' + amt + '</span>' + (d ? '<span class="d">' + d + '</span>' : "") + '</div>'; }
+  function pct(v){ return (Math.round(v * 1000) / 10) + "%"; }
+  function render(){
+    var y = +document.querySelector('input[name="ey"]:checked').value, pt = n("ept"), tx = n("etx"), loc = $("eloc").checked;
+    var say = $("etr-say");
+    if (pt <= 0) { $("etr-rows").innerHTML = ""; say.className = "verdict mid"; say.textContent = "세전이익이 없거나 손실인 해는 이 방법으로 볼 수 없습니다. 이익이 난 해의 숫자를 넣어 보세요."; return; }
+    var base = corpTax(pt, y), exp = loc ? base * 1.1 : base, ratio = tx / exp, gap = exp - tx;
+    var h = [];
+    h.push(row("실제 유효세율", pct(tx / pt), "법인세비용 " + man(tx) + " ÷ 세전이익 " + man(pt)));
+    h.push(row("법정세율 그대로의 법인세", man(exp), y + " 사업연도 세율" + (loc ? ", 지방소득세 10% 포함" : "") + " · 유효세율 " + pct(exp / pt)));
+    h.push(row(gap >= 0 ? "차이 (공제·감면 등으로 줄어든 금액)" : "차이 (법정세율 금액보다 더 낸 금액)", man(Math.abs(gap)), "실제가 법정세율 금액의 " + pct(ratio)));
+    $("etr-rows").innerHTML = h.join("");
+    if (ratio > 1.15) { say.className = "verdict mid"; say.textContent = "법정세율로 계산한 금액보다 높습니다. 접대비 한도 초과 같은 손금불산입, 이연법인세, 전기분 추가 납부 등이 섞여 있을 수 있습니다. 이 경우에도 받을 수 있었던 공제가 빠졌는지는 따로 확인해 볼 만합니다."; }
+    else if (ratio >= 0.95) { say.className = "verdict hi"; say.textContent = "법정세율을 그대로 적용한 금액과 거의 같습니다. 이 해에 받은 세액공제가 거의 없는 것으로 보입니다. 직원이 늘었거나 설비·연구개발에 투자했다면 아래에서 고용 세액공제부터 계산해 보세요. 5년 안이면 경정청구로 돌려받을 수 있습니다."; }
+    else if (ratio >= 0.7) { say.className = "verdict mid"; say.textContent = "일부 공제나 감면이 적용된 것으로 보입니다. 직원 증가분이나 투자분이 모두 반영됐는지 아래 계산으로 확인해 보세요."; }
+    else { say.className = "verdict lo"; say.textContent = "상당한 공제·감면이 적용됐거나 이월결손금 등이 있는 것으로 보입니다."; }
+  }
+  // 안내문 QR: ?y=2025&pt=167760&tx=33382 (만원)
+  var q = new URLSearchParams(location.search);
+  if (q.get("pt") && q.get("tx")) {
+    var yy = q.get("y"); if (yy && $("ey-" + yy)) $("ey-" + yy).checked = true;
+    $("ept").value = Number(q.get("pt")).toLocaleString("ko-KR");
+    $("etx").value = Number(q.get("tx")).toLocaleString("ko-KR");
+    if (q.get("loc") === "0") $("eloc").checked = false;
+    $("etr-from").hidden = false;
+  }
+  $("etr").addEventListener("input", render);
+  $("etr").addEventListener("change", function(e){
+    if (e.target.id === "ept" || e.target.id === "etx") { var raw = e.target.value.replace(/[^0-9]/g, ""); e.target.value = raw ? Number(raw).toLocaleString("ko-KR") : ""; }
+    render();
+  });
   render();
 })();
 </script>

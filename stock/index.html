@@ -38,6 +38,19 @@ p{margin:0}
 .sample{font-size:12px;color:var(--gold);background:var(--gold-soft);border-radius:8px;padding:6px 10px}
 .seg{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:10px;overflow:hidden}
 .seg.three{grid-template-columns:repeat(3,1fr)}
+.seg.four{grid-template-columns:repeat(4,1fr)}
+.seg.four label{font-size:13px}
+.diff{background:var(--accent-soft);border-radius:10px;padding:10px 12px;font-size:14px;align-self:stretch}
+.cmp{align-self:stretch;display:flex;flex-direction:column;gap:8px;border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.cmp:empty{display:none}
+.cmp .t{font-size:13px;color:var(--muted)}
+.cmp .bar{display:grid;grid-template-columns:7.5em minmax(0,1fr) auto;gap:8px;align-items:center;font-size:14px}
+.cmp .bar i{display:block;height:12px;border-radius:6px;background:var(--line)}
+.cmp .bar.sp i{background:var(--accent)}
+.cmp .bar .v{font:500 15px var(--f-num);white-space:nowrap}
+.cmp .save{font-size:15px}
+.cmp .save b{color:var(--accent)}
+.cmp a{color:var(--accent);font-size:13px}
 .seg input{position:absolute;opacity:0;pointer-events:none}
 .seg label{text-align:center;padding:9px 4px;font-weight:500;cursor:pointer;color:var(--muted);font-size:14px}
 .seg input:checked+label{background:var(--accent);color:var(--surface)}
@@ -150,8 +163,27 @@ footer a{color:var(--accent)}
     <span class="eyebrow" id="h-res">1주당 평가액 (추정)</span>
     <div class="big num" id="big">0<small>원</small></div>
     <p class="sub" id="res-sub"></p>
+    <div class="cmp" id="cmp" aria-label="증여세 비교"></div>
     <div class="rows" id="rows"></div>
     <div class="notes" id="notes"></div>
+  </section>
+
+  <section class="card" id="gift" aria-labelledby="h-gift">
+    <div class="card-head">
+      <h2 id="h-gift">자녀에게 증여하면 세금은 얼마나</h2>
+      <p class="sub">위 평가액만큼의 주식을 성인 자녀 한 명에게 증여한다고 보고, 일반 증여세와 가업승계 증여세 과세특례를 나란히 계산합니다.</p>
+    </div>
+    <div class="grp"><span>부모가 회사를 계속 경영한 기간</span>
+      <div class="seg four" role="radiogroup" aria-label="경영 기간">
+        <input type="radio" name="yrs" id="yrs-0" value="0"><label for="yrs-0">10년 미만</label>
+        <input type="radio" name="yrs" id="yrs-10" value="10" checked><label for="yrs-10">10~20년</label>
+        <input type="radio" name="yrs" id="yrs-20" value="20"><label for="yrs-20">20~30년</label>
+        <input type="radio" name="yrs" id="yrs-30" value="30"><label for="yrs-30">30년 이상</label>
+      </div>
+    </div>
+    <div class="rows" id="gift-rows"></div>
+    <div class="diff" id="gift-diff"></div>
+    <div class="notes" id="gift-notes"></div>
   </section>
 
   <section class="card" aria-labelledby="h-use">
@@ -192,6 +224,8 @@ footer a{color:var(--accent)}
       <li>순자산가치에 영업권 평가액을 더함 (시행령 제55조 제3항, 제59조 제2항, 시행규칙 제19조): (3년 가중평균 순이익 × 50% − 자기자본 × 10%)를 5년간 10%로 할인한 금액. 사업 3년 미만, 부동산 80% 이상, 3년 연속 결손이면 더하지 않음</li>
       <li>순자산가치로만 평가 (시행령 제54조 제4항): 사업 3년 미만. 부동산 또는 주식 비중 80% 이상이면 가중평균액이 순자산가치보다 낮을 때 순자산가치</li>
       <li>최대주주 할증 20% (법 제63조 제3항, 시행령 제53조): 중소기업, 매출 5천억원 미만 중견기업, 3년 연속 결손 법인은 제외</li>
+      <li>일반 증여세 (법 제26조, 제53조): 성인 자녀 증여재산공제 5천만원 후 1억 이하 10%, 5억 이하 20%, 10억 이하 30%, 30억 이하 40%, 초과 50%. 신고세액공제 3% 전 금액</li>
+      <li>가업승계 증여세 과세특례 (조세특례제한법 제30조의6): 18세 이상 자녀가 60세 이상 부모로부터 10년 이상 경영한 중소·중견기업(직전 3년 평균 매출 5천억원 미만) 주식을 받는 경우, 10억원 공제 후 10% (과세표준 120억원 초과분 20%). 한도: 경영 10~20년 300억, 20~30년 400억, 30년 이상 600억. 한도 초과분은 일반 증여세로 계산</li>
     </ul>
     <p>이 결과는 입력한 숫자로 계산한 간이 추정치이며 신고용 평가가 아닙니다. 평가일 전후의 매매 사례·감정가액 같은 시가가 있으면 시가가 먼저 적용되고, 자산의 시가 재평가, 세무조정, 증자·감자 환산, 일시적 이익 조정, 청산 중인 법인 등은 반영하지 않았습니다. 입력한 값은 이 기기 안에서만 계산되고 어디로도 전송되지 않습니다.</p>
     <p><a href="../">지인회계법인의 다른 도구 보기</a></p>
@@ -265,7 +299,61 @@ footer a{color:var(--accent)}
     if (x.major && x.sz !== "l") n.push((x.sz === "s" ? "중소기업" : "중견기업") + "이라 최대주주 할증 20%를 적용하지 않았습니다.");
     n.push("증여세는 이 평가액에서 증여재산공제(성인 자녀 10년간 5천만원 등)를 뺀 금액에 10~50% 세율로 계산합니다. 가업승계 과세특례 대상이면 세율이 크게 낮아집니다.");
     $("notes").innerHTML = n.map(function(t){ return "<p>" + t + "</p>"; }).join("");
+    renderGift(r.total / 10000, x);
   }
+
+  // 증여세 (만원 단위)
+  function giftGeneral(v){
+    var t = Math.max(0, v - 5000), B = [[10000, .1, 0], [50000, .2, 1000], [100000, .3, 6000], [300000, .4, 16000], [Infinity, .5, 46000]];
+    for (var i = 0; i < B.length; i++) if (t <= B[i][0]) return Math.max(0, t * B[i][1] - B[i][2]);
+    return 0;
+  }
+  function giftSpecial(v, yrs){
+    var lim = { 10:3000000, 20:4000000, 30:6000000 }[yrs];
+    var sp = Math.min(v, lim), base = Math.max(0, sp - 100000);
+    var t = base <= 1200000 ? base * .1 : 120000 + (base - 1200000) * .2;
+    return { tax: t + (v > lim ? giftGeneral(v - lim) : 0), lim: lim, over: Math.max(0, v - lim) };
+  }
+  function renderGift(v, x){
+    var yrs = +pick("yrs"), g = giftGeneral(v), h = [], notes = [];
+    h.push(row("증여할 주식 평가액", man(v), ""));
+    h.push(row("일반 증여세", man(g), "증여재산공제 5천만원, 10~50% 누진세율"));
+    var ok = yrs >= 10 && x.sz !== "l";
+    var cmp = $("cmp");
+    if (ok && v > 0) {
+      var s0 = giftSpecial(v, yrs), wmax = Math.max(g, 1);
+      cmp.innerHTML = '<span class="t">이 주식을 자녀 한 명에게 증여하면 (부모 경영 ' + { 10:"10~20년", 20:"20~30년", 30:"30년 이상" }[yrs] + ')</span>' +
+        '<div class="bar"><span>일반 증여세</span><i style="width:100%"></i><span class="v">' + man(g) + '</span></div>' +
+        '<div class="bar sp"><span>가업승계 특례</span><i style="width:' + Math.max(2, s0.tax / wmax * 100) + '%"></i><span class="v">' + man(s0.tax) + '</span></div>' +
+        '<p class="save">요건을 갖추면 <b class="num">' + man(Math.max(0, g - s0.tax)) + '</b> 줄어듭니다. <a href="#gift">계산 내역·요건 보기</a></p>';
+    } else if (v > 0) {
+      cmp.innerHTML = '<span class="t">자녀 한 명에게 증여하면 일반 증여세 약 <b class="num">' + man(g) + '</b></span><a href="#gift">가업승계 특례 조건 보기</a>';
+    } else cmp.innerHTML = "";
+    if (ok) {
+      var s = giftSpecial(v, yrs);
+      h.push(row("가업승계 과세특례 적용 시", man(s.tax), "10억원 공제 후 10%(120억원 초과분 20%), 한도 " + man(s.lim) + (s.over > 0 ? " · 한도 초과 " + man(s.over) + "은 일반 증여세" : "")));
+      $("gift-diff").innerHTML = "요건을 갖추면 증여세가 <b class=\"num\">" + man(Math.max(0, g - s.tax)) + "</b> 줄어듭니다.";
+    } else {
+      $("gift-diff").textContent = x.sz === "l" ? "대기업(그 외)은 가업승계 과세특례 대상이 아닙니다." : "부모가 10년 이상 경영해야 가업승계 과세특례를 받을 수 있습니다.";
+    }
+    $("gift-rows").innerHTML = h.join("");
+    notes.push("특례는 받는 자녀가 신고기한까지 가업에 종사하고 증여일부터 3년 안에 대표이사에 취임해야 하며, 5년간 지분·가업 유지 요건이 있습니다. 회사 자산 중 사업과 관계없는 자산(임대 부동산, 여유 금융자산 등)에 해당하는 몫은 특례에서 빠집니다.");
+    notes.push("특례로 증여한 주식은 나중에 상속이 일어나면 상속재산에 다시 더해 정산합니다. 증여 시점과 상속 계획을 함께 봐야 합니다.");
+    $("gift-notes").innerHTML = notes.map(function(t){ return "<p>" + t + "</p>"; }).join("");
+  }
+
+  // 안내문 QR: ?sh=&mine=&nav=&p1=&p2=&p3= (금액 만원), re=0|5|8, sz=s|m|l, major=0|1, yrs=0|10|20|30
+  (function(){
+    var q = new URLSearchParams(location.search), any = false;
+    ["sh", "mine", "nav", "p1", "p2", "p3"].forEach(function(k){ var v = q.get(k); if (v !== null && v !== "" && !isNaN(+v)) { $(k).value = Number(v).toLocaleString("ko-KR"); any = true; } });
+    [["re", "re-"], ["sz", "sz-"], ["yrs", "yrs-"]].forEach(function(p){ var v = q.get(p[0]); if (v && $(p[1] + v)) { $(p[1] + v).checked = true; any = true; } });
+    if (q.get("major") === "0") $("major").checked = false;
+    if (any) {
+      $("sample").textContent = "안내문에 적힌 귀사의 공시 숫자(DART 감사보고서)가 미리 들어 있습니다. 실제 숫자로 바꿔 보셔도 됩니다.";
+      $("gift").after($("input"));          // QR로 들어오면 결과와 승계 비교를 먼저 보여 주고 입력칸은 그 아래로
+      $("cmp").insertAdjacentHTML("afterend", '<p class="sub" style="font-size:12px">아래 \'회사 정보\'에서 숫자를 바꾸면 다시 계산됩니다.</p>');
+    }
+  })();
 
   function commas(el){
     var neg = /^\s*[-−]/.test(el.value);
@@ -276,6 +364,7 @@ footer a{color:var(--accent)}
   var touched = false;
   $("input").addEventListener("input", function(){ if (!touched) { touched = true; $("sample").hidden = true; } render(); });
   $("input").addEventListener("change", function(e){ if (e.target.matches(".f input")) commas(e.target); render(); });
+  $("gift").addEventListener("change", render);
 
   document.querySelectorAll("[data-copy]").forEach(function(b){
     b.addEventListener("click", function(){
